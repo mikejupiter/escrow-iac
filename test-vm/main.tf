@@ -15,6 +15,9 @@ resource "aws_instance" "example" {
 
   tags = {
     Name        = "example"  
-    InstanceID  = aws_instance.example.id  
   }
+}
+
+output "instance_id" {
+  value = aws_instance.example.id
 }
