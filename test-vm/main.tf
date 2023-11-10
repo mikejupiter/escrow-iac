@@ -5,6 +5,7 @@ provider "aws" {
 resource "aws_key_pair" "example_key" {
   key_name   = "example-key"
   public_key = file("../secrets/example_id_rsa.pub")  
+}
 
 resource "aws_instance" "example" {
   ami           = "ami-0fc5d935ebf8bc3bc"
