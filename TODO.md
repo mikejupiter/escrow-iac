@@ -9,8 +9,8 @@
 only one public IP address and rest of routing do onto internal IPs?
 
 ### General Terraform and Ansible research
-- Get AWS creds to run terraform against the our account
-- Create and run simple script to create/destroy bucket
++ +Get AWS creds to run terraform against the our account
++ +Create and run simple script to create/destroy bucket
 - Create a VM with reserved IP
 - Organize the file structure to run scripts
 - provision the Escrow service as Fargate/ECS
