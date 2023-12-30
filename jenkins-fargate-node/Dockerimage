@@ -8,6 +8,8 @@ RUN apt-get update && \
     apt-transport-https \
     ca-certificates \
     curl \
+    net-tools \
+    jq \
     gnupg-agent \
     software-properties-common \
     unzip && \
