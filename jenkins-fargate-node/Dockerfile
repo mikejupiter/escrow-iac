@@ -24,7 +24,7 @@ RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
 
 RUN apt update
 
-RUN apt install -y docker-ce docker-ce-cli containerd.io
+#RUN apt install -y docker-ce docker-ce-cli containerd.io
 RUN apt install -y terraform
 
 RUN apt clean && \
