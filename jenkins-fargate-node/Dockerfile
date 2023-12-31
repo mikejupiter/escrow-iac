@@ -17,7 +17,7 @@ RUN apt install -y \
 
 
 RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list
+    echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/docker.list
 
 RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
     echo "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
