@@ -15,6 +15,14 @@ RUN apt install -y \
     software-properties-common \
     unzip
 
+RUN mkdir -p /etc/docker/
+
+# Create or edit the daemon.json file
+RUN echo '{ \
+  "iptables": false, \
+  "dns": ["8.8.8.8", "8.8.4.4"] \
+}' > /etc/docker/daemon.json
+
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg
 
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | \
