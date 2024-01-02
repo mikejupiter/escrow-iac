@@ -6,6 +6,7 @@ USER root
 RUN apt update
 
 RUN apt install -y \
+    rsyslog \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -29,8 +30,6 @@ RUN echo '{ \
     "path": "/var/log/syslog.log" \
   } \
 }' > /etc/docker/daemon.json
-
-RUN ln -sf /dev/stdout /var/log/syslog.log
 
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg
 
