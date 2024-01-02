@@ -20,7 +20,7 @@ RUN mkdir -p /etc/docker/
 
 # Create or edit the daemon.json file
 RUN echo '{ \
-  "iptables": false
+  "iptables": false \
 }' > /etc/docker/daemon.json
 
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg
