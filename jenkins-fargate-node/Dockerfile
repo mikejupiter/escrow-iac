@@ -20,15 +20,7 @@ RUN mkdir -p /etc/docker/
 
 # Create or edit the daemon.json file
 RUN echo '{ \
-  "iptables": false, \
-  "dns": ["8.8.8.8", "8.8.4.4"], \
-  "log-driver": "json-file", \
-  "log-opts": { \
-    "max-size": "10m", \
-    "max-file": "3", \
-    "tag": "myapp", \
-    "path": "/var/log/syslog.log" \
-  } \
+  "iptables": false
 }' > /etc/docker/daemon.json
 
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg
