@@ -6,7 +6,7 @@ USER root
 RUN apt update
 
 RUN apt install -y \
-    rsyslog \
+    systemd systemd-journal-gatewayd systemd-container \
     apt-transport-https \
     ca-certificates \
     curl \
