@@ -1,48 +1,30 @@
-FROM jenkins/inbound-agent:latest-jdk21
+FROM gcr.io/kaniko-project/executor:debug AS kaniko
+FROM jenkins/inbound-agent:latest-alpine-jdk21
 
 USER root
 
-# Install necessary packages (adjust versions as needed)
-RUN apt update
+RUN apk --update add \
+bash \
+curl \
+git \
+jq \
+unzip \
+npm
 
-RUN apt install -y \
-    systemd systemd-journal-gatewayd systemd-container \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    net-tools \
-    jq \
-    gnupg-agent \
-    software-properties-common \
-    unzip
 
-RUN mkdir -p /etc/docker/
-
-# Create or edit the daemon.json file
-RUN echo '{ \
-  "iptables": false \
-}' > /etc/docker/daemon.json
-
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker.gpg
-
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | \
-    tee /etc/apt/sources.list.d/docker.list
-
-RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
-    echo "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
-
-RUN apt update
-
-RUN apt install -y docker-ce docker-ce-cli containerd.io
-RUN apt install -y terraform
-
-RUN apt clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Install AWS CLI v2 (adjust version as needed)
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip && \
-    ./aws/install && \
-    rm -rf aws awscliv2.zip
+RUN apk add terraform --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
+#
+# Add kaniko to this image by re-using binaries and steps from official image
+#
+COPY --from=kaniko /kaniko/ /kaniko/
+ENV SSL_CERT_DIR /kaniko/ssl/certs
+ENV PATH $PATH:/usr/local/bin:/kaniko
+ENV DOCKER_CONFIG /kaniko/.docker/
+ENV DOCKER_CREDENTIAL_GCR_CONFIG /kaniko/.config/gcloud/docker_credential_gcr_config.json
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && ./aws/install
+COPY files/Dockerfile.example /home/Dockerfile
+COPY files/scripts/execute.sh /home/execute.sh
+COPY files/config.json /root/.docker/config.json
+RUN chmod 755 /home/execute.sh /home/Dockerfile /root/.docker/config.json
 
 USER jenkins
