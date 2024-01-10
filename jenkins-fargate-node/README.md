@@ -14,7 +14,7 @@ create public repo like `public.ecr.aws/q7a1j3e0/cli-java21-jenkins-agent`
 # How to build
 
 ```
-docker build -t cli-java21-jenkins-agent .
+docker build --network host -t cli-java21-jenkins-agent .
 
 
 #create env vars
