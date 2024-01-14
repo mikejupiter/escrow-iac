@@ -32,5 +32,6 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
 
 RUN chmod 777 /kaniko
 RUN echo "jenkins ALL=(ALL) NOPASSWD: /kaniko/executor" >> /etc/sudoers
+RUN echo "Defaults env_keep += \"*\"" >> /etc/sudoers
 
 USER jenkins
