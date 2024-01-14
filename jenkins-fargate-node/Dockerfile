@@ -29,5 +29,6 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
     ./aws/install && \
     rm -rf aws awscliv2.zip
 
+RUN chmod 777 /kaniko
 
 USER jenkins
