@@ -5,6 +5,7 @@ USER root
 
 RUN apk --update add \
 bash \
+sudo \
 curl \
 git \
 jq \
