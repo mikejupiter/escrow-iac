@@ -4,7 +4,7 @@ provider "aws" {
 
 
 resource "aws_iam_user" "smtp_user" {
-  name = "smtp_user"
+  name = "g2_smtp_user"
 }
 
 resource "aws_iam_access_key" "smtp_user" {
@@ -24,7 +24,7 @@ resource "aws_iam_policy" "ses_sender" {
   policy      = data.aws_iam_policy_document.ses_sender.json
 }
 
-resource "aws_iam_user_policy_attachment" "test-attach" {
+resource "aws_iam_user_policy_attachment" "g2-smtp-user-attach" {
   user       = aws_iam_user.smtp_user.name
   policy_arn = aws_iam_policy.ses_sender.arn
 }
