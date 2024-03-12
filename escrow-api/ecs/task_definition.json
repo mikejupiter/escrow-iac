@@ -1,0 +1,16 @@
+[
+    {
+      "name": "escrow-api-container",
+      "image": "${docker_image_name}",
+      "cpu": 256,
+      "memory": 512,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+  
