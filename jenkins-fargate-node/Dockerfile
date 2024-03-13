@@ -4,13 +4,17 @@ FROM jenkins/inbound-agent:latest-alpine-jdk21
 USER root
 
 RUN apk --update add \
-bash \
-sudo \
-curl \
-git \
-jq \
-unzip \
-npm
+    bash \
+    sudo \
+    curl \
+    git \
+    jq \
+    unzip \
+    npm \
+    python3 \
+    py3-pip
+
+RUN pip3 install ansible    
 
 RUN wget https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_linux_amd64.zip
 RUN unzip terraform_1.6.6_linux_amd64.zip && rm terraform_1.6.6_linux_amd64.zip
