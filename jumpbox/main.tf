@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 data "aws_eip" "jumpbox_eip" {
-  id = "eip-12345678"  # Replace with the EIP ID you get from the first script
+  id = "eipalloc-0599652edad8e6d12"  # 54.164.209.95
 }
 
 # Create a security group for RDP access
