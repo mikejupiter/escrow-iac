@@ -73,6 +73,9 @@ resource "aws_instance" "jumpbox" {
 
       # Restart WinRM service
       Restart-Service -Name WinRM
+
+      # Configure Windows Firewall to allow RDP
+      New-NetFirewallRule -DisplayName "Allow RDP" -Direction Inbound -LocalPort 3389 -Protocol TCP -Action Allow
     </powershell>
   EOF
 }
