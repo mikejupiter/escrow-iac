@@ -59,11 +59,6 @@ resource "aws_instance" "jumpbox" {
     aws_security_group.winrm_sg.name
   ]
 
-  network_interface {
-    device_index          = 0
-    network_interface_id  = data.aws_eip.jumpbox_eip.network_interface_id
-  }
-
   # User data script to enable WinRM for Ansible
   user_data = <<-EOF
     <powershell>
@@ -80,6 +75,11 @@ resource "aws_instance" "jumpbox" {
       Restart-Service -Name WinRM
     </powershell>
   EOF
+}
+
+resource "aws_eip_association" "eip_jumpbox_assoc" {
+  instance_id   = aws_instance.jumpbox.id
+  allocation_id = data.aws_eip.jumpbox_eip.id
 }
 
 output "public_ip" {
