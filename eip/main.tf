@@ -7,5 +7,5 @@ resource "aws_eip" "jumpbox_eip" {
 }
 
 output "eip_id" {
-  value = aws_eip.my_eip.id
+  value = aws_eip.jumpbox_eip.id
 }
