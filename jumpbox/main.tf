@@ -52,7 +52,7 @@ resource "aws_security_group" "winrm_sg" {
 }
 
 resource "aws_instance" "jumpbox" {
-  ami           = "ami-000551805fdaf7e28"  # 64-bit (x86) Microsoft Windows 2022 Datacenter Core edition
+  ami           = "ami-0f9c44e98edf38a2b"  # 64-bit (x86) Microsoft Windows 2022 Datacenter edition. [English]
   instance_type = "t2.medium"
 
   key_name      = aws_key_pair.jumpbox_key.key_name  
