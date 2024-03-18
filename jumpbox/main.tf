@@ -54,14 +54,14 @@ resource "aws_instance" "jumpbox" {
     Name = "Jumpbox"
   }
 
+  security_groups = [
+    aws_security_group.rdp_sg.name,
+    aws_security_group.winrm_sg.name
+  ]
+
   network_interface {
     device_index          = 0
     network_interface_id  = data.aws_eip.jumpbox_eip.network_interface_id
-
-    security_groups = [
-      aws_security_group.rdp_sg.name,
-      aws_security_group.winrm_sg.name
-    ]
   }
 
   # User data script to enable WinRM for Ansible
