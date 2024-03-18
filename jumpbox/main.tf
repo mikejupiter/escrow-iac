@@ -50,16 +50,36 @@ resource "aws_instance" "jumpbox" {
   ami           = "ami-000551805fdaf7e28"  # 64-bit (x86) Microsoft Windows 2022 Datacenter Core edition
   instance_type = "t2.medium"
 
-  security_groups = [aws_security_group.rdp_sg.name, aws_security_group.winrm_sg.name]
-
   tags = {
     Name = "Jumpbox"
   }
 
   network_interface {
     device_index          = 0
-    network_interface_id  = data.aws_eip.jumpbox_eip.network_interface_id
+    network_interface_id  = data.aws_eip.my_eip.network_interface_id
+
+    security_groups = [
+      aws_security_group.rdp_sg.name,
+      aws_security_group.winrm_sg.name
+    ]
   }
+
+  # User data script to enable WinRM for Ansible
+  user_data = <<-EOF
+    <powershell>
+      # Enable WinRM
+      Enable-PSRemoting -Force
+
+      # Allow connections from all hosts (use specific IPs for security)
+      Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
+
+      # Allow basic authentication (needed by Ansible)
+      Set-Item WSMan:\localhost\Service\Auth\Basic -Value $true -Force
+
+      # Restart WinRM service
+      Restart-Service -Name WinRM
+    </powershell>
+  EOF
 }
 
 output "public_ip" {
