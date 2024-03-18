@@ -56,7 +56,7 @@ resource "aws_instance" "jumpbox" {
 
   network_interface {
     device_index          = 0
-    network_interface_id  = data.aws_eip.my_eip.network_interface_id
+    network_interface_id  = data.aws_eip.jumpbox_eip.network_interface_id
 
     security_groups = [
       aws_security_group.rdp_sg.name,
