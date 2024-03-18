@@ -9,3 +9,7 @@ resource "aws_eip" "jumpbox_eip" {
 output "eip_id" {
   value = aws_eip.jumpbox_eip.id
 }
+
+output "eip_public_ip" {
+  value = aws_eip.jumpbox_eip.public_ip
+}
