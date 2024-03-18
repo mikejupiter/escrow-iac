@@ -6,6 +6,11 @@ data "aws_eip" "jumpbox_eip" {
   id = "eipalloc-0599652edad8e6d12"  # 54.164.209.95
 }
 
+resource "aws_key_pair" "jumpbox_key" {
+  key_name   = "jumpbox-key"
+  public_key = file("../secrets/jumpbox_id_rsa.pub")  
+}
+
 # Create a security group for RDP access
 resource "aws_security_group" "rdp_sg" {
   name        = "allow_rdp"
@@ -49,6 +54,8 @@ resource "aws_security_group" "winrm_sg" {
 resource "aws_instance" "jumpbox" {
   ami           = "ami-000551805fdaf7e28"  # 64-bit (x86) Microsoft Windows 2022 Datacenter Core edition
   instance_type = "t2.medium"
+
+  key_name      = aws_key_pair.jumpbox_key.key_name  
 
   tags = {
     Name = "Jumpbox"
