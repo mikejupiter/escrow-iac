@@ -6,11 +6,20 @@
       "memory": 512,
       "portMappings": [
         {
-          "containerPort": "${env_var_port}",
-          "hostPort": "${env_var_port}",
+          "containerPort": ${env_var_port},
+          "hostPort": ${env_var_port},
           "protocol": "tcp"
         }
       ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-region": "${aws_region}",
+          "awslogs-group": "${env_var_awslogs_group}",
+          "awslogs-stream-prefix": "${env_var_awslogs_stream_prefix}",
+          "awslogs-create-group": ${env_var_awslogs_create_group}
+         }
+      },
       "environment": [
         {
           "name": "SPRING_PROFILES_ACTIVE",

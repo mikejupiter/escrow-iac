@@ -11,12 +11,28 @@ variable "docker_image_name" {
     description = "Name of the Docker image to use in the ECS task definition"
 }
 
+variable "awslogs_group" {
+    description = "The AWS log group"
+}
+
+variable "awslogs_stream_prefix" {
+    description = "The AWS log stream prefix"
+}
+
+variable "awslogs_create_group" {
+    description = "The AWS auto create log group"
+    type        = bool
+    default     = true  # Default value for awslogs-create-group
+}
+
 variable "env_var_profile" {
     description = "The app profile. Should be cloud, env  where env is one of prd or dev or qa"
 }
 
 variable "env_var_port" {
     description = "The app is listening on"
+    type        = number
+    default     = 8080  # Default value for port
 }
 
 variable "env_var_db_url" {
