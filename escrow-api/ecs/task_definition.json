@@ -6,11 +6,57 @@
       "memory": 512,
       "portMappings": [
         {
-          "containerPort": 8080,
-          "hostPort": 8080,
+          "containerPort": "${env_var_port}",
+          "hostPort": "${env_var_port}",
           "protocol": "tcp"
         }
-      ]
-    }
-  ]
+      ],
+      "environment": [
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": "${env_var_profile}"
+        },
+        {
+          "name": "SERVER_PORT",
+          "value": "${env_var_port}"
+        },
+        {
+          "name": "DB_URL",
+          "value": "${env_var_db_url}"
+        },
+        {
+          "name": "DB_USERNAME",
+          "value": "${env_var_db_username}"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "${env_var_db_password}"
+        },
+        {
+          "name": "JWT_SECRET",
+          "value": "${env_var_jwt_secret}"
+        },
+        {
+          "name": "STRIPE_SECRET",
+          "value": "${env_var_stripe_secret}"
+        },
+        {
+          "name": "LOG_APP",
+          "value": "${env_var_log_level}"
+        },
+        {
+          "name": "LOG_HTTP_REQUESTS",
+          "value": "${env_var_log_http_request}"
+        },
+        {
+          "name": "LOG_HTTP",
+          "value": "${env_var_log_http}"
+        },
+        {
+          "name": "LOG_APP",
+          "value": "${env_var_log_level}"
+        }
+    ]
+  }
+]
   
