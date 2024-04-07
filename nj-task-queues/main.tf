@@ -35,6 +35,7 @@ resource "aws_iam_policy" "sqs_access_policy" {
         Effect    = "Allow",
         Action    = [
           "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
           "sqs:SendMessage"
         ],
         Resource  = [
