@@ -49,7 +49,7 @@ resource "aws_iam_policy" "sqs_access_policy_dev" {
           "sqs:SendMessage"
         ],
         Resource  = [
-          aws_sqdev_e_ticketing_missed_image_muni_courts.arn,
+          aws_sqs_queue.dev_e_ticketing_missed_image_muni_courts.arn,
           aws_sqs_queue.dev_etickets_for_upload.arn,
           aws_sqs_queue.dev_e_ticketing_missed_image_muni_courts.arn,
           aws_sqs_queue.dev_e_ticketing_missed_image.arn
