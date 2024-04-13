@@ -17,6 +17,16 @@ resource "aws_sqs_queue" "dev_etickets_for_upload_failure" {
   name = "dev_etickets_for_upload_failure"
 }
 
+# Define the queue to initiate eTicketing missed images checks per muni/court pair
+resource "aws_sqs_queue" "dev_e_ticketing_missed_image_muni_courts" {
+  name = "dev_e_ticketing_missed_image_muni_courts"
+}
+
+# Define the queue to handle missed eTicketing image
+resource "aws_sqs_queue" "dev_e_ticketing_missed_image" {
+  name = "dev_e_ticketing_missed_image"
+}
+
 
 # Create IAM user sts_access_dev
 resource "aws_iam_user" "sts_access_dev" {
@@ -39,8 +49,10 @@ resource "aws_iam_policy" "sqs_access_policy_dev" {
           "sqs:SendMessage"
         ],
         Resource  = [
+          aws_sqdev_e_ticketing_missed_image_muni_courts.arn,
           aws_sqs_queue.dev_etickets_for_upload.arn,
-          aws_sqs_queue.dev_etickets_for_upload_failure.arn
+          aws_sqs_queue.dev_e_ticketing_missed_image_muni_courts.arn,
+          aws_sqs_queue.dev_e_ticketing_missed_image.arn
         ]
       }
     ]
