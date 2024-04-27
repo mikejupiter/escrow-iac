@@ -63,7 +63,3 @@ resource "aws_security_group" "ecs_service" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-
-output "service_target_id" {
-  value = aws_ecs_service.service.id
-}
