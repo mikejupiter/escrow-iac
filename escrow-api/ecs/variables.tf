@@ -11,6 +11,10 @@ variable "docker_image_name" {
     description = "Name of the Docker image to use in the ECS task definition"
 }
 
+variable "awslogs_region" {
+    description = "The AWS log region"
+}
+
 variable "awslogs_group" {
     description = "The AWS log group"
 }

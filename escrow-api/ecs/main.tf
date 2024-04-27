@@ -7,9 +7,9 @@ locals {
     docker_image_name               = var.docker_image_name,
     env_var_port                    = var.env_var_port,
     awslogs_region                  = var.awslogs_region,
-    awslogs_group                   = var.env_var_awslogs_group,
-    awslogs_stream_prefix           = var.env_var_awslogs_stream_prefix,
-    awslogs_create_group            = var.env_var_awslogs_create_group,
+    awslogs_group                   = var.awslogs_group,
+    awslogs_stream_prefix           = var.awslogs_stream_prefix,
+    awslogs_create_group            = var.awslogs_create_group,
 
     env_var_profile                 = var.env_var_profile,
     env_var_db_url                  = env_var_db_url,
