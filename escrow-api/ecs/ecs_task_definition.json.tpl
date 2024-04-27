@@ -17,7 +17,7 @@
           "awslogs-region": "${aws_region}",
           "awslogs-group": "${env_var_awslogs_group}",
           "awslogs-stream-prefix": "${env_var_awslogs_stream_prefix}",
-          "awslogs-create-group": ${env_var_awslogs_create_group}
+          "awslogs-create-group": "${env_var_awslogs_create_group}"
          }
       },
       "environment": [
