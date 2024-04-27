@@ -5,11 +5,11 @@ resource "aws_ecs_cluster" "cluster" {
 locals {
   ecs_task_definition_template = templatefile("${path.module}/ecs_task_definition.json.tpl", {
     docker_image_name               = var.docker_image_name,
-    env_var_port                    = tostring(var.env_var_port),
+    env_var_port                    = var.env_var_port,
     awslogs_region                  = var.aws_region,
     awslogs_group                   = var.awslogs_group,
     awslogs_stream_prefix           = var.awslogs_stream_prefix,
-    awslogs_create_group            = tostring(var.awslogs_create_group),
+    awslogs_create_group            = var.awslogs_create_group,
 
     env_var_profile                 = var.env_var_profile,
     env_var_db_url                  = var.env_var_db_url,
