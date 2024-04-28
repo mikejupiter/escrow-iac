@@ -4,6 +4,9 @@
       "image": "${docker_image_name}",
       "cpu": 256,
       "memory": 512,
+      "compatibilities": [
+        "FARGATE"
+      ],
       "requires_compatibilities": ["FARGATE"],
       "portMappings": [
         {
