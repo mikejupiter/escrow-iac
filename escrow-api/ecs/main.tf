@@ -30,7 +30,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   container_definitions    = local.ecs_task_definition_template
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  execution_role_arn       = var.aws_ecs_cluster_arn
+  execution_role_arn       = var.ecs_service_exec_role
 }
 
 resource "aws_ecs_service" "service" {
