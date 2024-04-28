@@ -2,10 +2,6 @@ provider "aws" {
   region = var.aws_region
 }
 
-resource "aws_ecs_cluster" "cluster" {
-  name = var.ecs_cluster_name
-}
-
 locals {
   ecs_task_definition_template = templatefile("${path.module}/ecs_task_definition.json.tpl", {
     docker_image_name               = var.docker_image_name,
@@ -36,7 +32,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 
 resource "aws_ecs_service" "service" {
   name            = var.ecs_service_name
-  cluster         = aws_ecs_cluster.cluster.arn
+  cluster         = var.aws_ecs_cluster_arn
   task_definition = aws_ecs_task_definition.task_definition.arn
   desired_count   = 1
   launch_type     = "FARGATE"
