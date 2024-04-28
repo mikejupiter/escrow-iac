@@ -7,7 +7,6 @@
       "compatibilities": [
         "FARGATE"
       ],
-      "requires_compatibilities": ["FARGATE"],
       "portMappings": [
         {
           "containerPort": ${env_var_port},

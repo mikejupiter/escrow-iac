@@ -28,6 +28,7 @@ locals {
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = var.ecs_task_definition_name
   container_definitions    = local.ecs_task_definition_template
+  requires_compatibilities = ["FARGATE"]
 }
 
 resource "aws_ecs_service" "service" {
