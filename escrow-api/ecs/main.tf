@@ -26,6 +26,8 @@ locals {
 }
 
 resource "aws_ecs_task_definition" "task_definition" {
+  cpu                      = 256
+  memory                   = 1024
   family                   = var.ecs_task_definition_name
   container_definitions    = local.ecs_task_definition_template
   requires_compatibilities = ["FARGATE"]
