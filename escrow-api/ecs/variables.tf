@@ -18,6 +18,10 @@ variable "aws_ecs_cluster_arn" {
 }
 
 variable "docker_image_name" {
+    description = "executionRoleArn for fargate service"
+}
+
+variable "ecs_service_exec_role" {
     description = "Name of the Docker image to use in the ECS task definition"
 }
 
