@@ -35,7 +35,6 @@ resource "aws_ecs_service" "service" {
   cluster         = var.aws_ecs_cluster_arn
   task_definition = aws_ecs_task_definition.task_definition.arn
   desired_count   = 1
-  launch_type     = "FARGATE"
 
   network_configuration {
     subnets          = var.subnets

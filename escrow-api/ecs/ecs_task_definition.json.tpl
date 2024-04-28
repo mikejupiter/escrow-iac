@@ -4,6 +4,7 @@
       "image": "${docker_image_name}",
       "cpu": 256,
       "memory": 512,
+      "requires_compatibilities": ["FARGATE"]
       "portMappings": [
         {
           "containerPort": ${env_var_port},
