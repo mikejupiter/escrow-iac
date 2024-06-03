@@ -9,6 +9,7 @@ variable "subnets" {
 }
 
 variable "ecs_service_name" {}
+variable "target_group_arn" {}
 variable "ecs_task_definition_name" {
     description = "ECS task definition name"
 }
@@ -19,6 +20,31 @@ variable "aws_ecs_cluster_arn" {
 
 variable "docker_image_name" {
     description = "executionRoleArn for fargate service"
+}
+
+variable "max_capacity" {
+    description = "Max number of service instances"
+    default = 10
+}
+
+variable "min_capacity" {
+    description = "Min number of service instances"
+    default = 1
+}
+
+variable "scale_out_cooldown" {
+    description = "The cooldown period, in seconds, after a scale-out event. During this cooldown period, further scale-out events will be suppressed."
+    default = 300 #5 mins
+}
+
+variable "scale_in_cooldown" {
+    description = "The cooldown period, in seconds, after a scale-in event. During this cooldown period, further scale-out events will be suppressed."
+    default = 300 #5 mins
+}
+
+variable "target_cpu_utilization" {
+    description = "The CPU utilization percentage target value for the metric being tracked by the auto-scaling policy."
+    default = 90 #90%
 }
 
 variable "ecs_service_exec_role" {
