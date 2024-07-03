@@ -48,11 +48,11 @@ resource "aws_ecs_service" "service" {
     security_groups  = [aws_security_group.ecs_service.id]
   }
 
-  # load_balancer {
-  #   target_group_arn = var.target_group_arn
-  #   container_name   = "escrow-api-container"  # Replace with the name of your container
-  #   container_port   = 8080  # Replace with the port your container listens on
-  # }
+  load_balancer {
+    target_group_arn = var.target_group_arn
+    container_name   = "escrow-api-container"  # Replace with the name of your container
+    container_port   = 8080  # Replace with the port your container listens on
+  }
 }
 
 resource "aws_security_group" "ecs_service" {
