@@ -11,6 +11,25 @@ try {
     $UserAccount | Set-LocalUser -Password (ConvertTo-SecureString -AsPlainText -Force "${admin_password}")
     Add-Content -Path $LogFile -Value "User creation and group addition succeeded $Password"
 
+    # Get the volume object for the new disk (assumes it's Disk 1)
+    $disk = Get-Disk | Where-Object { $_.PartitionStyle -eq 'Uninitialized' }
+    Add-Content -Path $LogFile -Value "Unformatted disks: $disk"
+
+    if ($disk) {
+        Add-Content -Path $LogFile -Value "Initialize the disk: $disk"
+        Initialize-Disk -Number $disk.Number -PartitionStyle MBR
+
+        Add-Content -Path $LogFile -Value "Create a new partition and format it: $disk"
+        New-Partition -DiskNumber $disk.Number -UseMaximumSize -AssignDriveLetter | Format-Volume -FileSystem NTFS -NewFileSystemLabel "JumpboxData" -Confirm:$false
+
+        Add-Content -Path $LogFile -Value "Map to a specific drive letter for: $disk"
+        $driveLetter = (Get-Partition -DiskNumber $disk.Number | Select-Object -First 1).DriveLetter
+        Add-Content -Path $LogFile -Value "Disk initialized and formatted. Drive letter: $driveLetter"
+    } else {
+        Add-Content -Path $LogFile -Value "No uninitialized disk found."
+    }
+
+
     # Enable PSRemoting
     Enable-PSRemoting -Force
     Add-Content -Path $LogFile -Value "Enable-PSRemoting Done"

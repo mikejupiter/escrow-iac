@@ -1,6 +1,6 @@
 ---
-- name: Example
-  hosts: windows_servers
+- name: SetupJumpbox
+  hosts: jumpbox
 
   tasks:
     - name: gather facts
