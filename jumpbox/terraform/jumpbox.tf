@@ -52,7 +52,7 @@ resource "aws_security_group" "winrm_sg" {
 }
 
 resource "aws_security_group" "pg_sg" {
-  name        = "allow_rdp"
+  name        = "allow_postgres"
   description = "Allow Postgres traffic from your IP address"
 
   ingress {
