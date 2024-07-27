@@ -12,10 +12,16 @@ try {
     Add-Content -Path $LogFile -Value "User creation and group addition succeeded $Password"
 
     # Get the volume object for the new disk (assumes it's Disk 1)
-    $disk = Get-Disk | Where-Object { $_.PartitionStyle -eq 'Uninitialized' }
+    $disk = Get-Disk | Where-Object { $_.OperationalStatus -eq 'Online' -and $_.PartitionStyle -eq 'RAW' }
     Add-Content -Path $LogFile -Value "Unformatted disks: $disk"
 
     if ($disk) {
+    # Bring the disk online if it's offline
+        if ($disk.Status -eq 'Offline') {
+            Add-Content -Path $LogFile -Value "Bringing disk $($disk.Number) online."
+            Set-Disk -Number $disk.Number -IsOffline $false
+        }
+
         Add-Content -Path $LogFile -Value "Initialize the disk: $disk"
         Initialize-Disk -Number $disk.Number -PartitionStyle MBR
 
@@ -26,7 +32,7 @@ try {
         $driveLetter = (Get-Partition -DiskNumber $disk.Number | Select-Object -First 1).DriveLetter
         Add-Content -Path $LogFile -Value "Disk initialized and formatted. Drive letter: $driveLetter"
     } else {
-        Add-Content -Path $LogFile -Value "No uninitialized disk found."
+        Add-Content -Path $LogFile -Value "No RAW disk found."
     }
 
 
