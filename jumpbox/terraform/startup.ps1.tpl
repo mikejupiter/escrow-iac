@@ -12,7 +12,7 @@ try {
     Add-Content -Path $LogFile -Value "User creation and group addition succeeded $Password"
 
     # Get the volume object for the new disk (assumes it's Disk 1)
-    $disk = Get-Disk | Where-Object { $_.OperationalStatus -eq 'Online' -and $_.PartitionStyle -eq 'RAW' }
+    $disk = Get-Disk | Where-Object { $_.PartitionStyle -eq 'RAW' }
     Add-Content -Path $LogFile -Value "Unformatted disks: $disk"
 
     if ($disk) {
