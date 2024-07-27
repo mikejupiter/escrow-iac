@@ -1,0 +1,5 @@
+# PostgreSQL Client Authentication Configuration File
+
+{% for entry in pg_hba_entries %}
+{{ entry.type }} {{ entry.database }} {{ entry.user }} {{ entry.address }} {{ entry.method }}
+{% endfor %}

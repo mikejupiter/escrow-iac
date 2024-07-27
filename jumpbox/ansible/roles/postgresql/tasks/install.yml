@@ -1,0 +1,19 @@
+---
+- name: Check if PostgreSQL is already installed
+  win_stat:
+    path: "C:\\Programs\\Db\\PostgreSQL\\{{ postgresql_version }}"
+  register: pg_installed
+
+- name: Download PostgreSQL installer
+  win_get_url:
+    url: "https://get.enterprisedb.com/postgresql/postgresql-{{ postgresql_version }}-windows-x64.exe"
+    dest: "C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe"
+  when: not pg_installed.stat.exists
+
+- name: Install PostgreSQL
+  win_command: >
+    C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe --mode unattended
+    --prefix "C:\\Programs\\Db\\PostgreSQL"
+    --datadir "{{ postgresql_data_path }}"
+    --superpassword "{{ postgresql_master_password }}"
+  when: not pg_installed.stat.exists

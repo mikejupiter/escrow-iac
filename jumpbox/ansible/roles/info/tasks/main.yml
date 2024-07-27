@@ -1,0 +1,3 @@
+---
+- name: Get host info
+  import_tasks: generic.yml

@@ -1,0 +1,5 @@
+---
+- name: Restart PostgreSQL
+  win_service:
+    name: postgresql
+    state: restarted

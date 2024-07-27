@@ -1,0 +1,16 @@
+---
+- name: Check if database directory exists
+  win_stat:
+    path: "{{ postgresql_data_path }}"
+  register: db_data_path
+
+- name: Initialize PostgreSQL database
+  win_command: "{{ postgresql_bin_path }}\\pg_ctl.exe initdb -D {{ postgresql_data_path }}"
+  when: not db_data_path.stat.exists
+
+- name: Start PostgreSQL service
+  win_service:
+    name: postgresql
+    start_mode: auto
+    state: started
+  when: db_data_path.stat.exists

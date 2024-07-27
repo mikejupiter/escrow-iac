@@ -1,0 +1,9 @@
+---
+- name: Install PostgreSQL
+  import_tasks: install.yml
+
+- name: Configure PostgreSQL
+  import_tasks: configure_db.yml
+
+- name: Configure pg_hba.conf
+  import_tasks: configure_pg_hba.yml
