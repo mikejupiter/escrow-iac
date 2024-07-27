@@ -7,5 +7,5 @@
 - name: Template pg_hba.conf
   template:
     src: pg_hba.conf.j2
-    dest: "{{ postgresql_data_path }}\pg_hba.conf"
+    dest: "{{ postgresql_data_path }}\\pg_hba.conf"
   notify: Restart PostgreSQL
