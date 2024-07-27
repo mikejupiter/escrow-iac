@@ -54,6 +54,7 @@ resource "aws_security_group" "winrm_sg" {
 resource "aws_instance" "jumpbox" {
   ami           = "ami-0f9c44e98edf38a2b"  # 64-bit (x86) Microsoft Windows 2022 Datacenter edition. [English]
   instance_type = "t2.medium"
+  availability_zone = var.availability_zone
 
   key_name      = aws_key_pair.jumpbox_key.key_name  
 
@@ -76,4 +77,10 @@ resource "aws_instance" "jumpbox" {
 resource "aws_eip_association" "eip_jumpbox_assoc" {
   instance_id   = aws_instance.jumpbox.id
   allocation_id = data.aws_eip.jumpbox_eip.id
+}
+
+resource "aws_volume_attachment" "ebs_attachment" {
+  device_name = "/dev/sdh"
+  volume_id   = var.jumpbox_volume_id
+  instance_id = aws_instance.jumpbox.id
 }
