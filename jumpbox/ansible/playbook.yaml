@@ -1,0 +1,12 @@
+---
+- name: Example
+  hosts: windows_servers
+
+  tasks:
+    - name: gather facts
+      ansible.builtin.win_shell: systeminfo
+      register: systeminfo_output
+
+    - name: Display
+      ansible.builtin.debug:
+        var: systeminfo_output.stdout_lines

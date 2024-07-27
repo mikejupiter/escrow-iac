@@ -1,14 +1,14 @@
 provider "aws" {
-  region = "us-east-1"  # Replace with your desired AWS region
+  region = var.aws_region  # Replace with your desired AWS region
 }
 
 data "aws_eip" "jumpbox_eip" {
-  id = "eipalloc-0599652edad8e6d12"  # 54.164.209.95
+  id = var.eip
 }
 
 resource "aws_key_pair" "jumpbox_key" {
   key_name   = "jumpbox-key"
-  public_key = file("../secrets/jumpbox_id_rsa.pub")  
+  public_key = file("../../secrets/jumpbox_id_rsa.pub")  
 }
 
 # Create a security group for RDP access
@@ -37,8 +37,8 @@ resource "aws_security_group" "winrm_sg" {
   description = "Allow WinRM traffic for Ansible"
 
   ingress {
-    from_port   = 5985
-    to_port     = 5985
+    from_port   = 5986
+    to_port     = 5986
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]  # Replace with your internal network CIDR
   }
@@ -67,35 +67,13 @@ resource "aws_instance" "jumpbox" {
   ]
 
   # User data script to enable WinRM for Ansible
-  user_data = <<-EOF
-    <powershell>
-      # Enable WinRM
-      Enable-PSRemoting -Force
-
-      # Allow connections from all hosts (use specific IPs for security)
-      Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force
-
-      # Allow basic authentication (needed by Ansible)
-      Set-Item WSMan:\localhost\Service\Auth\Basic -Value $true -Force
-
-      # Restart WinRM service
-      Restart-Service -Name WinRM
-
-      # Configure Windows Firewall to allow RDP
-      New-NetFirewallRule -DisplayName "Allow RDP" -Direction Inbound -LocalPort 3389 -Protocol TCP -Action Allow
-    </powershell>
-  EOF
+  user_data = templatefile("${path.module}/startup.ps1.tpl", {
+    admin_password = var.admin_password
+  })
+  user_data_replace_on_change = true
 }
 
 resource "aws_eip_association" "eip_jumpbox_assoc" {
   instance_id   = aws_instance.jumpbox.id
   allocation_id = data.aws_eip.jumpbox_eip.id
-}
-
-output "public_ip" {
-  value = aws_instance.jumpbox.public_ip
-}
-
-output "administrator_password" {
-  value = aws_instance.jumpbox.password_data
 }
