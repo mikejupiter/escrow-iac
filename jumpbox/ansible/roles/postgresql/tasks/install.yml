@@ -4,6 +4,11 @@
     path: "C:\\Programs\\Db\\PostgreSQL\\{{ postgresql_version }}"
   register: pg_installed
 
+- name: Ensure C:\\Temp directory exists
+  win_file:
+    path: "C:\\Temp"
+    state: directory
+
 - name: Download PostgreSQL installer
   win_get_url:
     url: "https://get.enterprisedb.com/postgresql/postgresql-{{ postgresql_version }}-windows-x64.exe"
