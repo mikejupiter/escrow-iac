@@ -9,10 +9,11 @@
     path: "C:\\Temp"
     state: directory
 
-- name: Download PostgreSQL installer
-  win_get_url:
-    url: "https://get.enterprisedb.com/postgresql/postgresql-{{ postgresql_version }}-windows-x64.exe"
-    dest: "C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe"
+- name: Download PostgreSQL installer using PowerShell
+  win_shell: |
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $client = New-Object System.Net.WebClient
+    $client.DownloadFile("https://get.enterprisedb.com/postgresql/postgresql-{{ postgresql_version }}-windows-x64.exe", "C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe")
   when: not pg_installed.stat.exists
 
 - name: Install PostgreSQL
