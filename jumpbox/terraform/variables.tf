@@ -6,6 +6,9 @@ variable "availability_zone" {
     default = "us-east-1a"
     description = "The AWS log region"
 }
+variable "vpc_cidr" {
+    description = "Internal IP range"
+}
 
 # variable "vpc_id" {}
 # variable "subnets" {

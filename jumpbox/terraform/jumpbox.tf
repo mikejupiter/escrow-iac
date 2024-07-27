@@ -51,6 +51,19 @@ resource "aws_security_group" "winrm_sg" {
   }
 }
 
+resource "aws_security_group" "pg_sg" {
+  name        = "allow_rdp"
+  description = "Allow Postgres traffic from your IP address"
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr]  
+  }
+
+}
+
 resource "aws_instance" "jumpbox" {
   ami           = "ami-0f9c44e98edf38a2b"  # 64-bit (x86) Microsoft Windows 2022 Datacenter edition. [English]
   instance_type = "t2.medium"
