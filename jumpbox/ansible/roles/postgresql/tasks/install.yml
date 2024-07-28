@@ -13,13 +13,17 @@
   win_shell: |
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $client = New-Object System.Net.WebClient
-    $client.DownloadFile("https://get.enterprisedb.com/postgresql/postgresql-{{ postgresql_version }}-windows-x64.exe", "C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe")
+    $client.DownloadFile("{{ postgres_download_url }}", "C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe")
   when: not pg_installed.stat.exists
 
 - name: Install PostgreSQL
   win_command: >
     C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe --mode unattended
     --prefix "C:\\Programs\\Db\\PostgreSQL"
-    --datadir "{{ postgresql_data_path }}"
+    --mode unattended
+    --unattendedmodeui none
+    --create_samples no
+    --serverport 5432
+    --datadir "C:\\Temp\\DeleteMeDb"
     --superpassword "{{ postgresql_master_password }}"
   when: not pg_installed.stat.exists

@@ -1,3 +1,4 @@
-postgresql_version: "16"
+postgresql_version: "16.3"
+postgres_download_url: "https://sbp.enterprisedb.com/getfile.jsp?fileid=1259105"
 postgresql_data_path: "D:\\PgData"
 log_rotation_days: 10

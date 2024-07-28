@@ -1,16 +1,27 @@
 ---
-- name: Check if database directory exists
-  win_stat:
-    path: "{{ postgresql_data_path }}"
-  register: db_data_path
-
-- name: Initialize PostgreSQL database
-  win_command: "{{ postgresql_bin_path }}\\pg_ctl.exe initdb -D {{ postgresql_data_path }}"
-  when: not db_data_path.stat.exists
-
-- name: Start PostgreSQL service
+- name: Stop PostgreSQL service
   win_service:
     name: postgresql
-    start_mode: auto
-    state: started
-  when: db_data_path.stat.exists
+    state: stopped
+
+- name: Check if data directory is empty
+  win_find:
+    paths: "{{ postgresql_data_path }}"
+    recurse: no
+  register: pg_data_path_contents
+
+- name: Ensure data directory exists
+  win_file:
+    path: "{{ postgresql_data_path }}"
+    state: directory
+
+- name: Copy data from temporary DB if data directory is empty
+  win_copy:
+    src: "{{ postgresql_temp_data_path }}\\*"
+    dest: "{{ postgresql_data_path }}"
+    remote_src: yes
+  when: pg_data_path_contents.matched == 0
+
+- name: Configure PostgreSQL to use new data directory
+  win_shell: |
+    Set-Content -Path "C:\\Programs\\Db\\PostgreSQL\\{{ postgresql_version }}\\data\\postgresql.conf" -Value "data_directory = '{{ postgresql_data_path }}'"
