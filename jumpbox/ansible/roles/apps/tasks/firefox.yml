@@ -1,0 +1,21 @@
+---
+- name: Check if Firefox is already installed
+  win_stat:
+    path: "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
+  register: firefox_installed
+
+- name: Ensure C:\\Temp directory exists
+  win_file:
+    path: "C:\\Temp"
+    state: directory
+
+- name: Download Firefox installer if not installed
+  win_get_url:
+    url: https://download.mozilla.org/?product=firefox-latest&os=win64&lang=en-US
+    dest: C:\temp\firefox_installer.exe
+  when: not firefox_installed.stat.exists
+
+- name: Install Firefox if not installed
+  win_shell: |
+    Start-Process -FilePath C:\temp\firefox_installer.exe -ArgumentList '-ms' -Wait
+  when: not firefox_installed.stat.exists

@@ -3,5 +3,5 @@
   hosts: jumpbox
 
   roles:
-    - info
+    - apps
     - postgresql

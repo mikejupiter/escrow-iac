@@ -1,0 +1,12 @@
+---
+- name: Install Chocolatey if not present
+  import_tasks: choco.yml
+
+- name: Install 7-Zip under C:\Programs\Tools\7Zip
+  import_tasks: sevenzip.yml
+
+- name: Install Firefox under C:\Programs\Inet\Firefox
+  import_tasks: firefox.yml
+
+- name: Install Git under C:\Programs\Dev
+  import_tasks: git.yml

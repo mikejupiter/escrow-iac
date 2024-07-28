@@ -9,6 +9,21 @@
     path: "C:\\Temp"
     state: directory
 
+- name: Ensure C:\\Temp\DeleteMeDb directory exists
+  win_file:
+    path: "C:\\Temp\\DeleteMeDb"
+    state: directory    
+
+- name: Adjust ownership of the DeleteMeDb directory
+  win_acl:
+    path: "C:\\Temp\\DeleteMeDb"
+    user: "NT AUTHORITY\\NETWORK SERVICE"
+    rights: fullcontrol
+    type: allow
+    state: present
+  when: pg_data_path_stat.exists
+
+
 # - name: Download PostgreSQL installer using PowerShell
 #   win_shell: |
 #     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -26,8 +41,7 @@
     --datadir "C:\\Temp\\DeleteMeDb"
     --superpassword "{{ postgresql_master_password }}"
     --enable_acledit 1
-    --debuglevel 3
-    --logfile "C:\\Temp\\pg_install.log"
+    --debuglevel 4
   args:
     chdir: C:\\Temp
   when: not pg_installed.stat.exists
