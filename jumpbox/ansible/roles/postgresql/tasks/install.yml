@@ -18,7 +18,7 @@
 
 - name: Install PostgreSQL
   win_command: >
-    C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe --mode unattended
+    C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe 
     --prefix "C:\\Programs\\Db\\PostgreSQL"
     --mode unattended
     --unattendedmodeui none
