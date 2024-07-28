@@ -4,25 +4,24 @@
     path: "C:\\Programs\\Db\\PostgreSQL\\{{ postgresql_version }}"
   register: pg_installed
 
-- name: Ensure C:\\Temp directory exists
-  win_file:
-    path: "C:\\Temp"
-    state: directory
+# - name: Ensure C:\\Temp directory exists
+#   win_file:
+#     path: "C:\\Temp"
+#     state: directory
 
-- name: Download PostgreSQL installer using PowerShell
-  win_shell: |
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $client = New-Object System.Net.WebClient
-    $client.DownloadFile("{{ postgres_download_url }}", "C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe")
-  when: not pg_installed.stat.exists
+# - name: Download PostgreSQL installer using PowerShell
+#   win_shell: |
+#     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+#     $client = New-Object System.Net.WebClient
+#     $client.DownloadFile("{{ postgres_download_url }}", "C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe")
+#   when: not pg_installed.stat.exists
 
 - name: Install PostgreSQL
   win_command: >
-    C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe 
+    D:\\Install\\postgresql-{{ postgresql_version }}-windows-x64.exe 
     --prefix "C:\\Programs\\Db\\PostgreSQL"
     --mode unattended
     --unattendedmodeui none
-    --create_samples no
     --serverport 5432
     --datadir "C:\\Temp\\DeleteMeDb"
     --superpassword "{{ postgresql_master_password }}"

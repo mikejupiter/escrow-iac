@@ -11,9 +11,9 @@ try {
     $UserAccount | Set-LocalUser -Password (ConvertTo-SecureString -AsPlainText -Force "${admin_password}")
     Add-Content -Path $LogFile -Value "User creation and group addition succeeded $Password"
 
-    $diskOffline = Get-Disk | Where-Object { $_.PartitionStyle -eq 'Offline' }
+    $diskOffline = Get-Disk | Where-Object { $_.OperationalStatus -eq 'Offline' }
     Add-Content -Path $LogFile -Value "Offline disks: $diskOffline"
-    if (diskOffline) {
+    if ($diskOffline) {
         # $diskOffline.Status -eq 'Offline'
         Add-Content -Path $LogFile -Value "Bringing disk $($diskOffline.Number) online."
         Set-Disk -Number $diskOffline.Number -IsOffline $false
