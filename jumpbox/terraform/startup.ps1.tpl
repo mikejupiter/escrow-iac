@@ -11,17 +11,19 @@ try {
     $UserAccount | Set-LocalUser -Password (ConvertTo-SecureString -AsPlainText -Force "${admin_password}")
     Add-Content -Path $LogFile -Value "User creation and group addition succeeded $Password"
 
+    $diskOffline = Get-Disk | Where-Object { $_.PartitionStyle -eq 'Offline' }
+    Add-Content -Path $LogFile -Value "Offline disks: $diskOffline"
+    if (diskOffline) {
+        # $diskOffline.Status -eq 'Offline'
+        Add-Content -Path $LogFile -Value "Bringing disk $($diskOffline.Number) online."
+        Set-Disk -Number $diskOffline.Number -IsOffline $false
+    }
+
     # Get the volume object for the new disk (assumes it's Disk 1)
     $disk = Get-Disk | Where-Object { $_.PartitionStyle -eq 'RAW' }
     Add-Content -Path $LogFile -Value "Unformatted disks: $disk"
 
     if ($disk) {
-    # Bring the disk online if it's offline
-        if ($disk.Status -eq 'Offline') {
-            Add-Content -Path $LogFile -Value "Bringing disk $($disk.Number) online."
-            Set-Disk -Number $disk.Number -IsOffline $false
-        }
-
         Add-Content -Path $LogFile -Value "Initialize the disk: $disk"
         Initialize-Disk -Number $disk.Number -PartitionStyle MBR
 
