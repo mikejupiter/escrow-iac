@@ -4,16 +4,30 @@
     name: postgresql
     state: stopped
 
+- name: Check if data directory exists
+  win_stat:
+    path: "{{ postgresql_data_path }}"
+  register: pg_data_path_stat
+
+- name: Ensure data directory exists
+  win_file:
+    path: "{{ postgresql_data_path }}"
+    state: directory
+
 - name: Check if data directory is empty
   win_find:
     paths: "{{ postgresql_data_path }}"
     recurse: no
   register: pg_data_path_contents
 
-- name: Ensure data directory exists
-  win_file:
+- name: Adjust ownership of the data directory
+  win_acl:
     path: "{{ postgresql_data_path }}"
-    state: directory
+    user: "NT AUTHORITY\\NETWORK SERVICE"
+    rights: fullcontrol
+    type: allow
+    state: present
+  when: pg_data_path_stat.exists
 
 - name: Copy data from temporary DB if data directory is empty
   win_copy:

@@ -4,10 +4,10 @@
     path: "C:\\Programs\\Db\\PostgreSQL\\{{ postgresql_version }}"
   register: pg_installed
 
-# - name: Ensure C:\\Temp directory exists
-#   win_file:
-#     path: "C:\\Temp"
-#     state: directory
+- name: Ensure C:\\Temp directory exists
+  win_file:
+    path: "C:\\Temp"
+    state: directory
 
 # - name: Download PostgreSQL installer using PowerShell
 #   win_shell: |
@@ -18,7 +18,7 @@
 
 - name: Install PostgreSQL
   win_command: >
-    D:\\Install\\postgresql-{{ postgresql_version }}-windows-x64.exe 
+    {{ postgres_download_url }} 
     --prefix "C:\\Programs\\Db\\PostgreSQL"
     --mode unattended
     --unattendedmodeui none

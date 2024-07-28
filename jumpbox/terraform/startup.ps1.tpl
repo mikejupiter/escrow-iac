@@ -19,6 +19,14 @@ try {
         Set-Disk -Number $diskOffline.Number -IsOffline $false
     }
 
+    # Clear the read-only attribute
+    $diskReadOnly = Get-Disk | Where-Object { $_.IsReadOnly -eq $true }
+    Add-Content -Path $LogFile -Value "Read-only disks: $diskReadOnly"
+    if ($diskReadOnly) {
+        Add-Content -Path $LogFile -Value "Clearing read-only attribute on disk $($diskReadOnly.Number)."
+        Set-Disk -Number $diskReadOnly.Number -IsReadOnly $false
+    }
+
     # Get the volume object for the new disk (assumes it's Disk 1)
     $disk = Get-Disk | Where-Object { $_.PartitionStyle -eq 'RAW' }
     Add-Content -Path $LogFile -Value "Unformatted disks: $disk"
