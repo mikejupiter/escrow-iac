@@ -25,4 +25,9 @@
     --serverport 5432
     --datadir "C:\\Temp\\DeleteMeDb"
     --superpassword "{{ postgresql_master_password }}"
+    --enable_acledit 1
+    --debuglevel 3
+    --logfile "C:\\Temp\\pg_install.log"
+  args:
+    chdir: C:\\Temp
   when: not pg_installed.stat.exists
