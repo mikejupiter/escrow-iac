@@ -35,10 +35,11 @@
     executable: powershell.exe
   when: not git_duet_installed.stat.exists
   
-- name: Add Git Duet to PATH
+- name: Append Git Duet to PATH
   win_environment:
     state: present
     name: PATH
-    value: C:\Programs\Dev\GitDuet
+    value: >-
+      {{ (lookup('env', 'PATH') + ';C:\\Programs\\Dev\\GitDuet') if lookup('env', 'PATH') else 'C:\\Programs\\Dev\\GitDuet' }}
     level: user
   when: not git_duet_installed.stat.exists
