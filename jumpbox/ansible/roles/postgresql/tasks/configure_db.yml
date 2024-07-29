@@ -1,14 +1,4 @@
 ---
-- name: Stop PostgreSQL service
-  win_service:
-    name: postgresql
-    state: stopped
-
-- name: Check if data directory exists
-  win_stat:
-    path: "{{ postgresql_data_path }}"
-  register: pg_data_path_stat
-
 - name: Ensure data directory exists
   win_file:
     path: "{{ postgresql_data_path }}"
@@ -27,15 +17,25 @@
     rights: fullcontrol
     type: allow
     state: present
-  when: pg_data_path_stat.exists
 
-- name: Copy data from temporary DB if data directory is empty
-  win_copy:
-    src: "{{ postgresql_temp_data_path }}\\*"
-    dest: "{{ postgresql_data_path }}"
-    remote_src: yes
+- name: Initialize database cluster if data directory is empty
+  win_command: >
+    C:\\Program\\Db\\pgsql\\bin\\initdb.exe -D {{ postgresql_data_path }} -U postgres
   when: pg_data_path_contents.matched == 0
 
 - name: Configure PostgreSQL to use new data directory
-  win_shell: |
-    Set-Content -Path "C:\\Programs\\Db\\PostgreSQL\\{{ postgresql_version }}\\data\\postgresql.conf" -Value "data_directory = '{{ postgresql_data_path }}'"
+  win_template:
+    src: pg_hba.conf.j2
+    dest: "{{ postgresql_data_path }}\\pg_hba.conf"
+
+- name: Register PostgreSQL service
+  win_service:
+    name: postgresql
+    path: "C:\\Program\\Db\\pgsql\\pgsql\\bin\\pg_ctl.exe"
+    args: runservice -N postgresql -D "{{ postgresql_data_path }}" -w
+    start_mode: auto
+
+- name: Start PostgreSQL service
+  win_service:
+    name: postgresql
+    state: started

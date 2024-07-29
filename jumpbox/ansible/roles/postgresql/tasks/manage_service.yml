@@ -1,6 +1,0 @@
----
-- name: Start PostgreSQL service
-  win_service:
-    name: postgresql
-    start_mode: auto
-    state: started

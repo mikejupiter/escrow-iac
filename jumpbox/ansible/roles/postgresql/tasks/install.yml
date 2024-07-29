@@ -1,46 +1,15 @@
 ---
-- name: Check if PostgreSQL is already installed
-  win_stat:
-    path: "C:\\Programs\\Db\\PostgreSQL\\{{ postgresql_version }}"
-  register: pg_installed
-
-- name: Ensure C:\\Temp directory exists
+- name: Ensure PostgreSQL install directory exists
   win_file:
-    path: "C:\\Temp"
+    path: "C:\\Program\\Db\\pgsql"
     state: directory
 
-- name: Ensure C:\\Temp\DeleteMeDb directory exists
-  win_file:
-    path: "C:\\Temp\\DeleteMeDb"
-    state: directory    
+- name: Unzip PostgreSQL binaries
+  win_unzip:
+    src: "{{ postgres_download_url }}"
+    dest: "C:\\Program\\Db"
+  register: unzip_result
 
-- name: Adjust ownership of the DeleteMeDb directory
-  win_acl:
-    path: "C:\\Temp\\DeleteMeDb"
-    user: "NT AUTHORITY\\NETWORK SERVICE"
-    rights: fullcontrol
-    type: allow
-    state: present
-
-
-# - name: Download PostgreSQL installer using PowerShell
-#   win_shell: |
-#     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-#     $client = New-Object System.Net.WebClient
-#     $client.DownloadFile("{{ postgres_download_url }}", "C:\\Temp\\postgresql-{{ postgresql_version }}-windows-x64.exe")
-#   when: not pg_installed.stat.exists
-
-- name: Install PostgreSQL
-  win_command: >
-    {{ postgres_download_url }} 
-    --prefix "C:\\Programs\\Db\\PostgreSQL"
-    --mode unattended
-    --unattendedmodeui none
-    --serverport 5432
-    --datadir "C:\\Temp\\DeleteMeDb"
-    --superpassword "{{ postgresql_master_password }}"
-    --enable_acledit 1
-    --debuglevel 4
-  args:
-    chdir: C:\\Temp
-  when: not pg_installed.stat.exists
+- name: Debug unzip result
+  debug:
+    var: unzip_result
