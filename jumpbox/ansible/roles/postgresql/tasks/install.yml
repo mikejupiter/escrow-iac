@@ -21,7 +21,6 @@
     rights: fullcontrol
     type: allow
     state: present
-  when: pg_data_path_stat.exists
 
 
 # - name: Download PostgreSQL installer using PowerShell
