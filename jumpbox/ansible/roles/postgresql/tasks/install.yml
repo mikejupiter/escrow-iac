@@ -1,13 +1,13 @@
 ---
 - name: Ensure PostgreSQL install directory exists
   win_file:
-    path: "C:\\Program\\Db\\pgsql"
+    path: "C:\\Programs\\Db\\pgsql"
     state: directory
 
 - name: Unzip PostgreSQL binaries
   win_unzip:
     src: "{{ postgres_download_url }}"
-    dest: "C:\\Program\\Db"
+    dest: "C:\\Programs\\Db"
   register: unzip_result
 
 - name: Debug unzip result
