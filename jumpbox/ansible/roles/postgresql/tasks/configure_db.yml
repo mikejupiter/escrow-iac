@@ -41,7 +41,7 @@
 - name: Register PostgreSQL service
   win_service:
     name: postgresql
-    path: "{{ postgres_dir }}\\pgsql\\bin\\pg_ctl.exe runservice -N postgresql -D "{{ postgresql_data_path }}" -w"
+    path: "{{ postgres_dir }}\\pgsql\\bin\\pg_ctl.exe runservice -N postgresql -D \"{{ postgresql_data_path }}\" -w"
     username: "NT AUTHORITY\NetworkService"
     start_mode: auto
 
