@@ -6,9 +6,8 @@
 
 - name: Set PostgreSQL user password
   win_shell: >
-    "{{ postgres_dir }}\\pgsql\\bin\\psql.exe" -U {{ postgres_user }} -c "ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgresql_master_password }}';"
-  environment:
-    PGPASSWORD: "{{ postgresql_master_password }}"
+    "{{ postgres_dir }}\\pgsql\\bin\\psql.exe -U {{ postgres_user }} -c \"ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgresql_master_password }}';\""
+
   args:
     executable: cmd
   register: set_password_result
