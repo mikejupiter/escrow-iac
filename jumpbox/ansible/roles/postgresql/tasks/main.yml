@@ -1,7 +1,7 @@
 ---
 - name: Check for PostgreSQL binaries
   win_find:
-    paths: {{ postgres_dir }}\\bin
+    paths: "{{ postgres_dir }}\\bin"
     patterns: initdb.exe
   register: pg_binaries
 
