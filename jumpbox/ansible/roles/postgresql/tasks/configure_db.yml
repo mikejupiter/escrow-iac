@@ -40,8 +40,8 @@
 
 - name: Register PostgreSQL service
   win_service:
-    name: postgresql
-    path: "{{ postgres_dir }}\\pgsql\\bin\\pg_ctl.exe runservice -N postgresql -D \"{{ postgresql_data_path }}\" -w"
+    name: postgresql-x64-16
+    path: "{{ postgres_dir }}\\pgsql\\bin\\pg_ctl.exe runservice -N postgresql-x64-16 -D \"{{ postgresql_data_path }}\" -w"
     username: "NT AUTHORITY\NetworkService"
     password: ""
     start_mode: auto
