@@ -43,6 +43,7 @@
     name: postgresql
     path: "{{ postgres_dir }}\\pgsql\\bin\\pg_ctl.exe runservice -N postgresql -D \"{{ postgresql_data_path }}\" -w"
     username: "NT AUTHORITY\NetworkService"
+    password: ""
     start_mode: auto
 
 - name: Start PostgreSQL service

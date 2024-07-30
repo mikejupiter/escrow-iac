@@ -1,3 +1,5 @@
 ---
 pg_hba_entries:
   - { type: "host", database: "all", user: "all", address: "172.31.0.0/16", method: "md5" }
+  - { type: "host", database: "all", user: "all", address: "::1/32", method: "md5" }
+  - { type: "host", database: "all", user: "all", address: "127.0.0.1/32", method: "md5" }
