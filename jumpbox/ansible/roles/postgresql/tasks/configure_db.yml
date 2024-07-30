@@ -10,6 +10,26 @@
     recurse: no
   register: pg_data_path_contents
 
+- name: Adjust ownership of the data directory to Admin
+  win_acl:
+    path: "{{ postgresql_data_path }}"
+    user: "Administrator"
+    rights: fullcontrol
+    type: allow
+    state: present
+  when: pg_data_path_contents.matched == 0
+
+- name: Initialize database cluster if data directory is empty
+  win_command: >
+    {{ postgres_dir }}\\pgsql\\bin\\initdb.exe -D {{ postgresql_data_path }} -U postgres --locale="en_US.UTF-8"
+  when: pg_data_path_contents.matched == 0
+
+- name: Configure PostgreSQL to use new data directory
+  win_template:
+    src: pg_hba.conf.j2
+    dest: "{{ postgresql_data_path }}\\pg_hba.conf"
+
+
 - name: Adjust ownership of the data directory
   win_acl:
     path: "{{ postgresql_data_path }}"
@@ -18,21 +38,11 @@
     type: allow
     state: present
 
-- name: Initialize database cluster if data directory is empty
-  win_command: >
-    C:\\Programs\\Db\\pgsql\\bin\\initdb.exe -D {{ postgresql_data_path }} -U postgres --locale="en_US.UTF-8"
-  when: pg_data_path_contents.matched == 0
-
-- name: Configure PostgreSQL to use new data directory
-  win_template:
-    src: pg_hba.conf.j2
-    dest: "{{ postgresql_data_path }}\\pg_hba.conf"
-
 - name: Register PostgreSQL service
   win_service:
     name: postgresql
-    path: "C:\\Programs\\Db\\pgsql\\bin\\pg_ctl.exe"
-    args: runservice -N postgresql -D "{{ postgresql_data_path }}" -w
+    path: "{{ postgres_dir }}\\pgsql\\bin\\pg_ctl.exe runservice -N postgresql -D "{{ postgresql_data_path }}" -w"
+    username: "NT AUTHORITY\NetworkService"
     start_mode: auto
 
 - name: Start PostgreSQL service

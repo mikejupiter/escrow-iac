@@ -1,6 +1,13 @@
 ---
+- name: Check for PostgreSQL binaries
+  win_find:
+    paths: {{ postgres_dir }}\bin
+    patterns: initdb.exe
+  register: pg_binaries
+
 - name: Install PostgreSQL
   import_tasks: install.yml
+  when: pg_binaries.matched == 0
 
 - name: Configure PostgreSQL
   import_tasks: configure_db.yml
