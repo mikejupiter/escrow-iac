@@ -3,4 +3,5 @@ postgres_download_url: "D:\\Install\\postgresql-16.3-2-windows-x64-binaries.zip"
 postgres_dir: "C:\\Programs\\Db" 
 postgresql_data_path: "D:\\PgData"
 log_rotation_days: 10
+pg_service_name: postgresql-x64-16
 postgres_user: postgres
