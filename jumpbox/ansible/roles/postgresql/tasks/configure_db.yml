@@ -45,6 +45,7 @@
     username: "NT AUTHORITY\NetworkService"
     password: ""
     start_mode: auto
+  tags: reg_pg_service
 
 - name: Start PostgreSQL service
   win_service:
