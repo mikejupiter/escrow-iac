@@ -13,3 +13,11 @@
 - name: Debug unzip result
   debug:
     var: unzip_result
+
+- name: Adjust ownership of the data directory
+  win_acl:
+    path: "{{ postgres_dir }}\\pgsql"
+    user: "NT AUTHORITY\\NETWORK SERVICE"
+    rights: fullcontrol
+    type: allow
+    state: present
