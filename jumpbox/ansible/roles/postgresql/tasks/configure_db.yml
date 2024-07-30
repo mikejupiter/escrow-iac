@@ -21,7 +21,7 @@
 
 - name: Initialize database cluster if data directory is empty
   win_command: >
-    {{ postgres_dir }}\\pgsql\\bin\\initdb.exe -D {{ postgresql_data_path }} -U postgres --locale="en_US.UTF-8"
+    {{ postgres_dir }}\\pgsql\\bin\\initdb.exe -D {{ postgresql_data_path }} -U {{ postgres_user }} --locale="en_US.UTF-8"
   when: pg_data_path_contents.matched == 0
 
 - name: Configure PostgreSQL to use new data directory

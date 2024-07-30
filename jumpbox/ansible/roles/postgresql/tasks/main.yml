@@ -11,3 +11,7 @@
 
 - name: Configure PostgreSQL
   import_tasks: configure_db.yml
+
+- name: Configure PostgreSQL
+  import_tasks: configure_db.yml
+  tags: set_db_pass 

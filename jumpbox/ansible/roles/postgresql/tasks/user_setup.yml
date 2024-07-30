@@ -1,0 +1,19 @@
+---
+- name: Wait for PostgreSQL to start
+  win_shell: >
+    while ((Get-Service postgresql).Status -ne 'Running') { Start-Sleep -s 1 }
+  register: pg_service_status
+
+- name: Set PostgreSQL user password
+  win_shell: >
+    "{{ postgres_dir }}\\pgsql\\bin\\psql.exe" -U {{ postgres_user }} -c "ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}';"
+  environment:
+    PGPASSWORD: "{{ postgres_password }}"
+  args:
+    executable: cmd
+  register: set_password_result
+
+- name: Fail if setting PostgreSQL password failed
+  fail:
+    msg: "Failed to set PostgreSQL password"
+  when: set_password_result.rc != 0
