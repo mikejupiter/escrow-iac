@@ -55,6 +55,6 @@
 
 - name: Start PostgreSQL service
   win_service:
-    name: {{ pg_service_name }}
+    name: "{{ pg_service_name }}"
     state: started
   tags: start_pg_service
