@@ -43,13 +43,15 @@
     name: postgresql-x64-16
     path: "{{ postgres_dir }}\\pgsql\\bin\\pg_ctl.exe runservice -N postgresql-x64-16 -D \"{{ postgresql_data_path }}\" -w"
     start_mode: auto
+    username: S-1-5-20  # NT AUTHORITY\NetworkService
+    password: ""
   tags: reg_pg_service
 
-- name: Set PostgreSQL service to run as NetworkService
-  win_shell: |
-    $service = Get-WmiObject -Class Win32_Service -Filter "Name='postgresql-x64-16'"
-    $service.Change($null, $null, $null, $null, $null, $null, "NT AUTHORITY\\NetworkService", "")
-  tags: reg_pg_service
+# - name: Set PostgreSQL service to run as NetworkService
+#   win_shell: |
+#     $service = Get-WmiObject -Class Win32_Service -Filter "Name='postgresql-x64-16'"
+#     $service.Change($null, $null, $null, $null, $null, $null, "NT AUTHORITY\\NetworkService", "")
+#   tags: reg_pg_service
 
 - name: Start PostgreSQL service
   win_service:
