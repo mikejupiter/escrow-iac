@@ -59,30 +59,60 @@
 
 - name: Install Jenkins
   win_shell: |
-    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="%JAVA_HOME%" /L*v "C:\Temp\jenkins.log"
+    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ lookup('env', 'JAVA_HOME') }}" /L*v "C:\Temp\jenkins.log"
   when: not jenkins_installed
 
 - name: Stop Jenkins service to apply port configuration
   win_service:
     name: jenkins
     state: stopped
+  when: not jenkins_installed
 
-- name: Configure Jenkins to run on port 5555
-  win_lineinfile:
-    path: "{{ jenkins_dir }}\\jenkins.xml"
-    regexp: '(<arguments>)(.+)(</arguments>)'
-    line: '\1-Djenkins.httpPort=5555 \2\3'
+- name: Configure Jenkins
+  win_shell: |
+    [xml]$xml = Get-Content -Path "{{ jenkins_dir }}\\jenkins.xml"
+    
+    # Set custom JENKINS_HOME
+    $xml.jenkins.homeDirectory = "{{ jenkins_home }}"
+    
+    # Set custom port
+    $arguments = $xml.jenkins.arguments -split ' '
+    $arguments = $arguments | Where-Object { $_ -notlike "--httpPort*" }
+    $arguments += "--httpPort={{ jenkins_port }}"
+    $xml.jenkins.arguments = $arguments -join ' '
+    
+    $xml.Save("{{ jenkins_dir }}\\jenkins.xml")
+  when: not jenkins_installed
 
+- name: Remove existing plugins
+  win_shell: |
+    Remove-Item -Path "{{ jenkins_dir }}\\plugins\\*" -Recurse -Force
+    Remove-Item -Path "{{ jenkins_dir }}\\plugins\\*.jpi" -Force
+    Remove-Item -Path "{{ jenkins_dir }}\\plugins\\*.hpi" -Force
+  when: not jenkins_installed
+
+- name: Copy plugin list file to Jenkins directory
+  win_copy:
+    src: plugins.txt
+    dest: "{{ jenkins_dir }}\\plugins.txt"
+  when: not jenkins_installed
+
+- name: Reinstall Jenkins plugins
+  win_shell: |
+    java -jar "{{ jenkins_dir }}\\jenkins-cli.jar" -s http://localhost:{{ jenkins_port}} install-plugin $(Get-Content -Path "{{ jenkins_dir }}\\plugins.txt") --verbose
+  args:
+    chdir: "{{ jenkins_dir }}"    
+  when: not jenkins_installed
+  
 - name: Ensure Jenkins service is running
   win_service:
     name: jenkins
     start_mode: auto
     state: started
-  when: not jenkins_installed
 
-- name: Wait for Jenkins to start
-  win_wait_for:
-    path: http://localhost:{{ jenkins_port }}
-    state: started
-    delay: 30
-  when: not jenkins_installed
+# - name: Wait for Jenkins to start
+#   win_wait_for:
+#     path: http://localhost:{{ jenkins_port }}
+#     state: started
+#     delay: 30
+#   when: not jenkins_installed
