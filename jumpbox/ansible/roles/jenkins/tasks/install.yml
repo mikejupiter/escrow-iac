@@ -74,12 +74,12 @@
 
 - name: Output Original Jenkins XML content using PowerShell
   community.windows.win_shell: |
-    [xml]$xml = Get-Content "{{ jenkins_dir }}\jenkins.xml"
+    [xml]$xml = Get-Content "{{ jenkins_dir }}\\jenkins.xml"
     $xml.OuterXml
 
 - name: Update JENKINS_HOME environment variable
   community.windows.win_xml:
-    path: "{{ jenkins_dir }}\jenkins.xml"
+    path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: "/service/env[@name='JENKINS_HOME']"
     attribute: "value"
     value: "{{ jenkins_home }}"
@@ -99,7 +99,7 @@
 
 - name: Output changed Jenkins XML content using PowerShell
   community.windows.win_shell: |
-    [xml]$xml = Get-Content "{{ jenkins_dir }}\jenkins.xml"
+    [xml]$xml = Get-Content "{{ jenkins_dir }}\\jenkins.xml"
     $xml.OuterXml
 
 - name: Copy plugin list file to Jenkins directory
