@@ -72,26 +72,30 @@
     path: "{{ jenkins_dir }}\\jre"
     state: absent
 
-# - name: Update JENKINS_HOME environment variable
-#   community.windows.win_xml:
-#     path: "{{ jenkins_dir }}\\jenkins.xml"
-#     xpath: "/service/env[@name='JENKINS_HOME']"
-#     attribute: "value"
-#     value: "{{ jenkins_home }}"
+- name: Update JENKINS_HOME environment variable
+  community.windows.win_xml:
+    path: "{{ jenkins_dir }}\\jenkins.xml"
+    xpath: "/service/env[@name='JENKINS_HOME']"
+    attribute: "value"
+    type: attribute
+    fragment: "{{ jenkins_home }}"
 
 - name: Update the path to Java executable using environment variable JAVA_HOME
   community.windows.win_xml:
     path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: "/service/executable"
     type: text
-    fragment: "{{ lookup('env', 'JAVA_HOME') }}\\bin\\java.exe"
+    fragment: "{{ lookup('env', 'JAVA_EXE') }}"
+  environment:
+    JAVA_EXE: "{{ lookup('env', 'JAVA_HOME') }}\\bin\\java.exe"
 
 - name: Update --httpPort in arguments
   community.windows.win_xml:
     path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: /service/arguments
     attribute: "--httpPort"
-    value: "{{ jenkins_port }}"    
+    type: attribute
+    fragment: "{{ jenkins_port }}"    
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
