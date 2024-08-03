@@ -83,7 +83,7 @@
   community.windows.win_xml:
     path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: "/service/executable"
-    value: "{{ lookup('env', 'JAVA_HOME') }}\\bin\\java.exe"
+    value: "test"
 
 - name: Update --httpPort in arguments
   community.windows.win_xml:
