@@ -73,7 +73,7 @@
     state: absent
 
 - name: Output Original Jenkins XML content using PowerShell
-  community.windows.win_shell: |
+  win_shell: |
     [xml]$xml = Get-Content "{{ jenkins_dir }}\\jenkins.xml"
     $xml.OuterXml
 
@@ -98,7 +98,7 @@
     value: "{{ jenkins_port }}"    
 
 - name: Output changed Jenkins XML content using PowerShell
-  community.windows.win_shell: |
+  win_shell: |
     [xml]$xml = Get-Content "{{ jenkins_dir }}\\jenkins.xml"
     $xml.OuterXml
 
