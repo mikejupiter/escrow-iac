@@ -10,3 +10,6 @@
 
 - name: Install Git under C:\Programs\Dev
   import_tasks: git.yml
+
+- name: Install Notepad++ to C:\Programs\Tools\Notepad++
+  import_tasks: notepadpp.yml  

@@ -1,0 +1,8 @@
+---
+- name: Install Notepad++
+  win_chocolatey:
+    name: notepadplusplus
+    state: present
+    install_args: '-y --install-directory=C:\Programs\Tools\NotepadPlusPlus'
+  environment:
+    ChocolateyInstall: C:\ProgramData\chocolatey

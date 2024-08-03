@@ -1,0 +1,88 @@
+---
+- name: Check if Jenkins service exists
+  win_command: |
+    powershell -Command "Get-Service -Name jenkins -ErrorAction SilentlyContinue"
+  register: jenkins_service_check
+  ignore_errors: yes
+
+- name: Set fact if Jenkins is installed
+  set_fact:
+    jenkins_installed: "{{ jenkins_service_check.rc == 0 }}"
+
+- name: Ensure {{ jenkins_home }} directory exists
+  win_file:
+    path: "{{ jenkins_home }}"
+    state: directory
+  when: not jenkins_installed
+
+- name: Ensure {{ jenkins_dir }} directory exists
+  win_file:
+    path: "{{ jenkins_dir }}"
+    state: directory
+  when: not jenkins_installed  
+
+- name: Set JENKINS_HOME environment variable
+  win_environment:
+    state: present
+    name: JENKINS_HOME
+    value: "{{ jenkins_home }}"
+    level: machine
+  when: not jenkins_installed
+
+- name: Copy plugins.txt to Jenkins home directory
+  win_copy:
+    src: "files/plugins.txt"
+    dest: "{{ jenkins_home }}\\plugins.txt"
+  when: not jenkins_installed
+
+- name: Ensure C:\\Temp directory exists
+  win_file:
+    path: "C:\\Temp"
+    state: directory
+  when: not jenkins_installed
+
+# - name: Download Jenkins MSI
+#   win_uri:
+#     url: "https://mirrors.jenkins.io/windows/latest"
+#     dest: "C:\\Temp\\jenkins.msi"
+#     method: GET
+#     force_basic_auth: no
+#     follow_redirects: all
+#   when: not jenkins_installed
+
+# - name:  Download Jenkins MSI using PowerShell
+#   win_shell: |
+#     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+#     $client = New-Object System.Net.WebClient
+#     $client.DownloadFile("https://mirrors.jenkins.io/windows/latest", "C:\\Temp\\jenkins.msi")
+#   when: not jenkins_installed
+
+- name: Install Jenkins
+  win_shell: |
+    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="%JAVA_HOME%" /L*v "C:\Temp\jenkins.log"
+  when: not jenkins_installed
+
+- name: Stop Jenkins service to apply port configuration
+  win_service:
+    name: jenkins
+    state: stopped
+
+- name: Configure Jenkins to run on port 5555
+  win_lineinfile:
+    path: "{{ jenkins_dir }}\\jenkins.xml"
+    regexp: '(<arguments>)(.+)(</arguments>)'
+    line: '\1-Djenkins.httpPort=5555 \2\3'
+
+- name: Ensure Jenkins service is running
+  win_service:
+    name: jenkins
+    start_mode: auto
+    state: started
+  when: not jenkins_installed
+
+- name: Wait for Jenkins to start
+  win_wait_for:
+    path: http://localhost:{{ jenkins_port }}
+    state: started
+    delay: 30
+  when: not jenkins_installed

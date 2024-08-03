@@ -1,0 +1,94 @@
+---
+- name: Ensure C:\\Temp directory exists
+  win_file:
+    path: "C:\\Temp"
+    state: directory
+
+- name: Ensure Java directory exists
+  win_file:
+    path: "{{ java_dir }}"
+    state: directory
+
+- name: Check for existing JDK directories
+  win_find:
+    paths: "{{ java_dir }}"
+    file_type: directory
+    recurse: no
+    patterns: 'jdk*'
+  register: jdk_dirs
+
+- name: Debug found JDK directories
+  debug:
+    var: jdk_dirs    
+
+- name: Download Amazon Corretto 21 installer
+  win_get_url:
+    url: https://corretto.aws/downloads/latest/amazon-corretto-21-x64-windows-jdk.zip
+    dest: "C:\\Temp\\amazon-corretto-21-x64-windows-jdk.zip"
+  when: jdk_dirs.matched == 0
+
+
+- name: Extract Amazon Corretto
+  win_unzip:
+    src: "C:\\Temp\\amazon-corretto-21-x64-windows-jdk.zip"
+    dest: "{{ java_dir }}"
+  register: unzip_result
+  when: jdk_dirs.matched == 0
+
+- name: Debug unzip result
+  debug:
+    var: unzip_result
+  when: jdk_dirs.matched == 0
+
+- name: Find extracted Java directory name
+  win_find:
+    paths: "{{ java_dir }}"
+    file_type: directory
+    recurse: no
+    patterns: 'jdk*'
+  register: java_dir
+
+- name: Debug extracted directory
+  debug:
+    var: java_dir
+
+- name: Set JAVA_HOME environment variable
+  win_environment:
+    state: present
+    name: JAVA_HOME
+    value: "{{ item.path }}"
+    level: machine
+  loop: "{{ java_dir.files }}"
+  when: item.isdir and 'jdk' in item.path
+
+- name: Check if PATH contains %JAVA_HOME%\bin
+  win_shell: |
+    $env:PATH -like "*%JAVA_HOME%\bin*"
+  register: path_check
+  changed_when: false
+
+- name: Output result of PATH check
+  debug:
+    msg: "PATH contains %JAVA_HOME%\\bin: {{ path_check.stdout.strip()}}"
+
+- name: Add JAVA_HOME bin to PATH if missing
+  ansible.windows.win_path:
+    elements:
+      - '%JAVA_HOME%\bin\'
+  when: path_check.stdout.strip() == 'False'
+  changed_when: true
+
+- name: Reboot Windows to apply PATH. Validate that the netlogon service has started, before running the next task
+  ansible.windows.win_reboot:
+    test_command: |
+      exit (Get-Service -Name WinRM).Status -ne "Running"
+  when: path_check.stdout.strip() == 'False'
+
+- name: Check the status of the WinRM service
+  win_shell: |
+    (Get-Service -Name WinRM).Status
+  register: winrm_status
+
+- name: Output the status of the WinRM service
+  debug:
+    msg: "WinRM service status: {{ winrm_status.stdout }}"

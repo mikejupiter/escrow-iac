@@ -40,6 +40,6 @@
     state: present
     name: PATH
     value: >-
-      {{ (lookup('env', 'PATH') + ';C:\\Programs\\Dev\\GitDuet') if lookup('env', 'PATH') else 'C:\\Programs\\Dev\\GitDuet' }}
+      {{ (lookup('env', 'PATH') + ';C:\Programs\Dev\GitDuet') if lookup('env', 'PATH') else 'C:\Programs\Dev\GitDuet' }}
     level: user
   when: not git_duet_installed.stat.exists

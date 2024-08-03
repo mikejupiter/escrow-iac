@@ -1,0 +1,4 @@
+---
+- name: Install Java if not present
+  import_tasks: jdk.yml
+  tags: java 
