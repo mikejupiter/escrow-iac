@@ -69,14 +69,14 @@
 - name: Update JENKINS_HOME environment variable
   community.general.xml:
     path: "{{ jenkins_dir }}\\jenkins.xml"
-    xpath: /service/env[@name='JENKINS_HOME']
-    attribute: value
+    xpath: "/service/env[@name='JENKINS_HOME']"
+    attribute: "value"
     value: "{{ jenkins_home }}"
 
 - name: Update the path to Java executable using environment variable JAVA_HOME
   community.general.xml:
     path: "{{ jenkins_dir }}\\jenkins.xml"
-    xpath: /service/executable
+    xpath: "/service/executable"
     value: "{{ lookup('env', 'JAVA_HOME') }}\\bin\\java.exe"
 
 - name: Update --httpPort in arguments
