@@ -29,12 +29,6 @@
     level: machine
   when: not jenkins_installed
 
-- name: Copy plugins.txt to Jenkins home directory
-  win_copy:
-    src: "files/plugins.txt"
-    dest: "{{ jenkins_home }}\\plugins.txt"
-  when: not jenkins_installed
-
 - name: Ensure C:\\Temp directory exists
   win_file:
     path: "C:\\Temp"
@@ -70,25 +64,26 @@
 
 - name: Configure Jenkins
   win_shell: |
-    [xml]$xml = Get-Content -Path "{{ jenkins_dir }}\\jenkins.xml"
-    
-    # Set custom JENKINS_HOME
-    $xml.jenkins.homeDirectory = "{{ jenkins_home }}"
-    
-    # Set custom port
-    $arguments = $xml.jenkins.arguments -split ' '
-    $arguments = $arguments | Where-Object { $_ -notlike "--httpPort*" }
-    $arguments += "--httpPort={{ jenkins_port }}"
-    $xml.jenkins.arguments = $arguments -join ' '
-    
-    $xml.Save("{{ jenkins_dir }}\\jenkins.xml")
-  when: not jenkins_installed
+    # Update JENKINS_HOME environment variable
+    $envElement = $xml.service.env | Where-Object { $_.name -eq "JENKINS_HOME" }
+    if ($envElement) {
+        $envElement.value = "{{ jenkins_home }}"
+    } else {
+        $newEnv = $xml.CreateElement("env")
+        $newEnv.SetAttribute("name", "JENKINS_HOME")
+        $newEnv.SetAttribute("value", "{{ jenkins_home }}")
+        $xml.service.AppendChild($newEnv)
+    }
 
-- name: Remove existing plugins
-  win_shell: |
-    Remove-Item -Path "{{ jenkins_dir }}\\plugins\\*" -Recurse -Force
-    Remove-Item -Path "{{ jenkins_dir }}\\plugins\\*.jpi" -Force
-    Remove-Item -Path "{{ jenkins_dir }}\\plugins\\*.hpi" -Force
+    # Update --httpPort in arguments
+    $argumentsElement = $xml.service.arguments
+    $argumentsElement = $argumentsElement -replace '--httpPort=\d+', '--httpPort={{ jenkins_port }}'
+    if ($argumentsElement -notmatch '--httpPort=') {
+        $argumentsElement += ' --httpPort={{ jenkins_port }}'
+    }
+    $xml.service.arguments = $argumentsElement
+
+    $xml.Save("{{ jenkins_dir }}\\jenkins.xml")
   when: not jenkins_installed
 
 - name: Copy plugin list file to Jenkins directory
@@ -103,7 +98,7 @@
   args:
     chdir: "{{ jenkins_dir }}"    
   when: not jenkins_installed
-  
+
 - name: Ensure Jenkins service is running
   win_service:
     name: jenkins
