@@ -60,39 +60,31 @@
   win_service:
     name: jenkins
     state: stopped
-  when: not jenkins_installed
 
 - name: Remove jre folder from Jenkins directory
   win_shell: |
     Remove-Item -Path "{{ jenkins_dir }}\\jre" -Recurse -Force
   when: jenkins_installed
 
-- name: Configure Jenkins
-  win_shell: |
-    # Update JENKINS_HOME environment variable
-    $envElement = $xml.service.env | Where-Object { $_.name -eq "JENKINS_HOME" }
-    if ($envElement) {
-        $envElement.value = "{{ jenkins_home }}"
-    } else {
-        $newEnv = $xml.CreateElement("env")
-        $newEnv.SetAttribute("name", "JENKINS_HOME")
-        $newEnv.SetAttribute("value", "{{ jenkins_home }}")
-        $xml.service.AppendChild($newEnv)
-    }
+- name: Update JENKINS_HOME environment variable
+  xml:
+    path: "{{ jenkins_dir }}\\jenkins.xml"
+    xpath: /service/env[@name='JENKINS_HOME']
+    attribute: value
+    value: "{{ jenkins_home }}"
 
-    # Update the path to Java executable using environment variable JAVA_HOME
-    $xml.service.executable = "$env:JAVA_HOME\\bin\\java.exe"
+- name: Update the path to Java executable using environment variable JAVA_HOME
+  xml:
+    path: "{{ jenkins_dir }}\\jenkins.xml"
+    xpath: /service/executable
+    value: "{{ lookup('env', 'JAVA_HOME') }}\\bin\\java.exe"
 
-    # Update --httpPort in arguments
-    $argumentsElement = $xml.service.arguments
-    $argumentsElement = $argumentsElement -replace '--httpPort=\d+', '--httpPort={{ jenkins_port }}'
-    if ($argumentsElement -notmatch '--httpPort=') {
-        $argumentsElement += ' --httpPort={{ jenkins_port }}'
-    }
-    $xml.service.arguments = $argumentsElement
-
-    $xml.Save("{{ jenkins_dir }}\\jenkins.xml")
-  when: not jenkins_installed
+- name: Update --httpPort in arguments
+  xml:
+    path: "{{ jenkins_dir }}\\jenkins.xml"
+    xpath: /service/arguments
+    attribute: "--httpPort"
+    value: "{{ jenkins_port }}"    
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
