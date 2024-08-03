@@ -61,10 +61,10 @@
     name: jenkins
     state: stopped
 
-- name: Remove jre folder from Jenkins directory
-  win_shell: |
-    Remove-Item -Path "{{ jenkins_dir }}\\jre" -Recurse -Force
-  when: jenkins_installed
+- name: Remove folder if it exists
+  file:
+    path: "{{ jenkins_dir }}/jre"
+    state: absent
 
 - name: Update JENKINS_HOME environment variable
   community.general.xml:
