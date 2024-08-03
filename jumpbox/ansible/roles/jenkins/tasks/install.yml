@@ -87,7 +87,7 @@
 
 - name: Construct path to java.exe
   set_fact:
-    java_executable: "{{ {{ java_home_result.stdout }} }}\\bin\\java.exe"
+    java_executable: "{{ {{ java_home_result.stdout.strip() }} }}\\bin\\java.exe"
 
 - name: Update the path to Java executable using environment variable JAVA_HOME
   community.windows.win_xml:
