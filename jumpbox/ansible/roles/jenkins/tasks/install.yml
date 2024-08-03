@@ -63,7 +63,7 @@
 
 - name: Remove folder if it exists
   file:
-    path: "{{ jenkins_dir }}/jre"
+    path: "{{ jenkins_dir }}\\jre"
     state: absent
 
 - name: Update JENKINS_HOME environment variable
