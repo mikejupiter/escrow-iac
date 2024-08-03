@@ -62,7 +62,7 @@
     state: stopped
 
 - name: Remove folder if it exists
-  file:
+  win_file:
     path: "{{ jenkins_dir }}\\jre"
     state: absent
 
