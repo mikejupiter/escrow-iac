@@ -1,4 +1,10 @@
 ---
+- name: Debug variables
+  debug:
+    msg:
+      - "jenkins_dir: {{ jenkins_dir }}"
+      - "jenkins_home: {{ jenkins_home }}"
+
 - name: Check if Jenkins service exists
   win_command: |
     powershell -Command "Get-Service -Name jenkins -ErrorAction SilentlyContinue"
@@ -66,9 +72,14 @@
     path: "{{ jenkins_dir }}\\jre"
     state: absent
 
+- name: Output Original Jenkins XML content using PowerShell
+  community.windows.win_shell: |
+    [xml]$xml = Get-Content "{{ jenkins_dir }}\jenkins.xml"
+    $xml.OuterXml
+
 - name: Update JENKINS_HOME environment variable
   community.windows.win_xml:
-    path: "{{ jenkins_dir }}\\jenkins.xml"
+    path: "{{ jenkins_dir }}\jenkins.xml"
     xpath: "/service/env[@name='JENKINS_HOME']"
     attribute: "value"
     value: "{{ jenkins_home }}"
@@ -85,6 +96,11 @@
     xpath: /service/arguments
     attribute: "--httpPort"
     value: "{{ jenkins_port }}"    
+
+- name: Output changed Jenkins XML content using PowerShell
+  community.windows.win_shell: |
+    [xml]$xml = Get-Content "{{ jenkins_dir }}\jenkins.xml"
+    $xml.OuterXml
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
