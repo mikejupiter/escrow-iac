@@ -62,6 +62,11 @@
     state: stopped
   when: not jenkins_installed
 
+- name: Remove jre folder from Jenkins directory
+  win_shell: |
+    Remove-Item -Path "{{ jenkins_dir }}\\jre" -Recurse -Force
+  when: jenkins_installed
+
 - name: Configure Jenkins
   win_shell: |
     # Update JENKINS_HOME environment variable
@@ -74,6 +79,9 @@
         $newEnv.SetAttribute("value", "{{ jenkins_home }}")
         $xml.service.AppendChild($newEnv)
     }
+
+    # Update the path to Java executable using environment variable JAVA_HOME
+    $xml.service.executable = "$env:JAVA_HOME\\bin\\java.exe"
 
     # Update --httpPort in arguments
     $argumentsElement = $xml.service.arguments
