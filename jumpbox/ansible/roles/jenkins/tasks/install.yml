@@ -85,17 +85,14 @@
     path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: "/service/executable"
     type: text
-    fragment: "{{ lookup('env', 'JAVA_EXE') }}"
-  environment:
-    JAVA_EXE: "{{ lookup('env', 'JAVA_HOME') }}\\bin\\java.exe"
+    fragment: "java.exe"
 
 - name: Update --httpPort in arguments
   community.windows.win_xml:
     path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: /service/arguments
-    attribute: "--httpPort"
-    type: attribute
-    fragment: "{{ jenkins_port }}"    
+    type: text
+    fragment: '-Xrs -Xmx1024m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar {{ jenkins_dir }}\jenkins.war" --httpPort={{ jenkins_port }} --webroot={{ jenkins_dir }}\war"'   
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
