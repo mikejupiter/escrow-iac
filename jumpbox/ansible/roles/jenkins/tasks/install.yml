@@ -80,19 +80,27 @@
     type: attribute
     fragment: "{{ jenkins_home }}"
 
+- name: Read JAVA_HOME environment variable
+  set_fact:
+    java_home: "{{ lookup('env', 'JAVA_HOME') }}"
+
+- name: Construct path to java.exe
+  set_fact:
+    java_executable: "{{ java_home }}\\bin\\java.exe"
+
 - name: Update the path to Java executable using environment variable JAVA_HOME
   community.windows.win_xml:
     path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: "/service/executable"
     type: text
-    fragment: "java.exe"
+    fragment: "{{ java_executable }}"
 
 - name: Update --httpPort in arguments
   community.windows.win_xml:
     path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: /service/arguments
     type: text
-    fragment: '-Xrs -Xmx1024m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar {{ jenkins_dir }}\jenkins.war" --httpPort={{ jenkins_port }} --webroot={{ jenkins_dir }}\war"'   
+    fragment: '-Xrs -Xmx1024m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar {{ jenkins_dir }}\jenkins.war --httpPort={{ jenkins_port }} --webroot={{ jenkins_dir }}\war'   
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
