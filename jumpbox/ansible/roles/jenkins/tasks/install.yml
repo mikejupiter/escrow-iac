@@ -72,17 +72,12 @@
     path: "{{ jenkins_dir }}\\jre"
     state: absent
 
-- name: Output Original Jenkins XML content using PowerShell
-  win_shell: |
-    [xml]$xml = Get-Content "{{ jenkins_dir }}\\jenkins.xml"
-    $xml.OuterXml
-
-- name: Update JENKINS_HOME environment variable
-  community.windows.win_xml:
-    path: "{{ jenkins_dir }}\\jenkins.xml"
-    xpath: "/service/env[@name='JENKINS_HOME']"
-    attribute: "value"
-    value: "{{ jenkins_home }}"
+# - name: Update JENKINS_HOME environment variable
+#   community.windows.win_xml:
+#     path: "{{ jenkins_dir }}\\jenkins.xml"
+#     xpath: "/service/env[@name='JENKINS_HOME']"
+#     attribute: "value"
+#     value: "{{ jenkins_home }}"
 
 - name: Update the path to Java executable using environment variable JAVA_HOME
   community.windows.win_xml:
@@ -96,11 +91,6 @@
     xpath: /service/arguments
     attribute: "--httpPort"
     value: "{{ jenkins_port }}"    
-
-- name: Output changed Jenkins XML content using PowerShell
-  win_shell: |
-    [xml]$xml = Get-Content "{{ jenkins_dir }}\\jenkins.xml"
-    $xml.OuterXml
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
