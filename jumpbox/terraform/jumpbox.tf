@@ -86,11 +86,6 @@ resource "aws_instance" "jumpbox" {
   })
   user_data_replace_on_change = true
 
-
-  provisioner "local-exec" {
-    when    = destroy
-    command = "aws ec2 stop-instances --instance-ids ${self.id} && aws ec2 wait instance-stopped --instance-ids ${self.id}"
-  }
 }
 
 resource "aws_eip_association" "eip_jumpbox_assoc" {
