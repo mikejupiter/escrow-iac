@@ -7,8 +7,7 @@
 
 - name: Get JAVA_HOME
   win_shell: |
-    $java_home = [System.Environment]::GetEnvironmentVariable('JAVA_HOME')
-    $java_home.Trim()
+    [System.Environment]::GetEnvironmentVariable('JAVA_HOME').Trim()
   register: java_home_result      
 
 - name: Check if Jenkins service exists
