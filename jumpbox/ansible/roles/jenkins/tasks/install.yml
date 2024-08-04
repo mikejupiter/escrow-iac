@@ -138,7 +138,7 @@
 
 - name: Install Jenkins plugins
   ansible.builtin.win_command: >
-    {{ java_executable }} -jar {{ jenkins_dir }}\jenkins-plugin-manager\jenkins-plugin-manager.jar
+    {{ java_executable }} -jar {{ jenkins_dir }}\jenkins-plugin-manager\jenkins-plugin-manager-2.13.0.jar
     --plugin-file {{ jenkins_dir }}\jenkins-plugin-manager\plugins.txt
     --war "{{ jenkins_dir }}\war\jenkins.war"
     --plugin-download-directory "{{ jenkins_home }}\plugins"
