@@ -119,16 +119,15 @@
     path: "{{ jenkins_home }}\\ref"
     state: directory
 
+- name: Ensure jenkins-plugin-manager plugins directory exists
+  ansible.builtin.win_file:
+    path: "{{ jenkins_dir }}\\jenkins-plugin-manager"
+    state: directory
+
 - name: Download Jenkins Plugin Installation Manager Tool
   ansible.builtin.win_get_url:
-    url: "https://github.com/jenkinsci/plugin-installation-manager-tool/releases/latest/download/jenkins-plugin-manager.zip"
-    dest: "C:\\Temp\\jenkins-plugin-manager.zip"
-
-- name: Extract Jenkins Plugin Installation Manager Tool
-  ansible.builtin.win_unzip:
-    src: C:\jenkins-plugin-manager\jenkins-plugin-manager.zip
+    url: "https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/2.13.0/jenkins-plugin-manager-2.13.0.jar"
     dest: "{{ jenkins_dir }}\\jenkins-plugin-manager"
-    rm: yes
 
 - name: Ensure Jenkins plugins directory exists
   ansible.builtin.win_file:
