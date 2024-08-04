@@ -101,19 +101,17 @@
     path: "{{ jenkins_dir }}\\jenkins.xml"
     xpath: /service/arguments
     type: text
-    fragment: '-Xrs -Xmx1024m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar {{ jenkins_dir }}\jenkins.war --httpPort={{ jenkins_port }} --webroot={{ jenkins_dir }}\war'   
+    fragment: '-Xrs -Xmx1024m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar {{ jenkins_dir }}\jenkins.war --httpPort={{ jenkins_port }} --enable-future-java --webroot={{ jenkins_dir }}\war'   
+
+- name: Ensure {{ jenkins_home }}\ref directory exists
+  win_file:
+    path: "{{ jenkins_home }}\\ref"
+    state: directory
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
     src: plugins.txt
-    dest: "{{ jenkins_dir }}\\plugins.txt"
-  when: not jenkins_installed
-
-- name: Reinstall Jenkins plugins
-  win_shell: |
-    java -jar "{{ jenkins_dir }}\\jenkins-cli.jar" -s http://localhost:{{ jenkins_port}} install-plugin $(Get-Content -Path "{{ jenkins_dir }}\\plugins.txt") --verbose
-  args:
-    chdir: "{{ jenkins_dir }}"    
+    dest: "{{ jenkins_dir }}\\ref\\plugins.txt"
   when: not jenkins_installed
 
 - name: Ensure Jenkins service is running
