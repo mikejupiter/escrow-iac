@@ -112,17 +112,40 @@
   win_file:
     path: "{{ jenkins_home }}\\plugins"
     state: absent
+  when: not jenkins_installed
 
 - name: Ensure {{ jenkins_home }}\ref directory exists
   win_file:
     path: "{{ jenkins_home }}\\ref"
     state: directory
 
+- name: Download Jenkins Plugin Installation Manager Tool
+  ansible.builtin.win_get_url:
+    url: "https://github.com/jenkinsci/plugin-installation-manager-tool/releases/latest/download/jenkins-plugin-manager.zip"
+    dest: "C:\\Temp\\jenkins-plugin-manager.zip"
+
+- name: Extract Jenkins Plugin Installation Manager Tool
+  ansible.builtin.win_unzip:
+    src: C:\jenkins-plugin-manager\jenkins-plugin-manager.zip
+    dest: "{{ jenkins_dir }}\\jenkins-plugin-manager"
+    rm: yes
+
+- name: Ensure Jenkins plugins directory exists
+  ansible.builtin.win_file:
+    path: "{{ jenkins_home }}\\plugins"
+    state: directory
+
 - name: Copy plugin list file to Jenkins directory
   win_copy:
     src: plugins.txt
-    dest: "{{ jenkins_home }}\\ref\\plugins.txt"
-  when: not jenkins_installed
+    dest: "{{ jenkins_dir }}\\ref\\plugins.txt"
+
+- name: Install Jenkins plugins
+  ansible.builtin.win_command: >
+    {{ java_executable }} -jar {{ jenkins_dir }}\jenkins-plugin-manager\jenkins-plugin-manager.jar
+    --plugin-file {{ jenkins_home }}\ref\plugins.txt
+    --war "{{ jenkins_dir }}\war\jenkins.war"
+    --plugin-download-directory "{{ jenkins_home }}\plugins"
 
 - name: Ensure Jenkins service is running
   win_service:
