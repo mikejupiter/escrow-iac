@@ -7,8 +7,13 @@
 
 - name: Get JAVA_HOME
   win_shell: |
-    [System.Environment]::GetEnvironmentVariable('JAVA_HOME').Trim()
-  register: java_home_result      
+    [System.Environment]::GetEnvironmentVariable('JAVA_HOME') 
+  register: java_home  
+  
+- name: Construct path to java_home_result
+  set_fact:
+    java_home_result: "{{ java_home.stdout.strip() }}"
+
 
 - name: Check if Jenkins service exists
   win_command: |
@@ -87,7 +92,7 @@
 
 - name: Construct path to java.exe
   set_fact:
-    java_executable: "{{ java_home_result.stdout.strip() }}\\bin\\java.exe"
+    java_executable: "{{ java_home_result }}\\bin\\java.exe"
 
 - name: Update the path to Java executable using environment variable JAVA_HOME
   community.windows.win_xml:
