@@ -7,7 +7,7 @@
 
 - name: Get JAVA_HOME
   win_shell: |
-    [System.Environment]::GetEnvironmentVariable('JAVA_HOME')
+    [System.Environment]::GetEnvironmentVariable('JAVA_HOME').strip()
   register: java_home_result      
 
 - name: Check if Jenkins service exists
@@ -64,7 +64,7 @@
 
 - name: Install Jenkins
   win_shell: |
-    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ java_home_result.strip() }}" /L*v "C:\Temp\jenkins.log"
+    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ java_home_result }}" /L*v "C:\Temp\jenkins.log"
   when: not jenkins_installed
 
 - name: Stop Jenkins service to apply port configuration
