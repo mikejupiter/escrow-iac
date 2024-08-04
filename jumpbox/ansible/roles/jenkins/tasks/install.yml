@@ -5,6 +5,11 @@
       - "jenkins_dir: {{ jenkins_dir }}"
       - "jenkins_home: {{ jenkins_home }}"
 
+- name: Get JAVA_HOME
+  win_shell: |
+    [System.Environment]::GetEnvironmentVariable('JAVA_HOME')
+  register: java_home_result      
+
 - name: Check if Jenkins service exists
   win_command: |
     powershell -Command "Get-Service -Name jenkins -ErrorAction SilentlyContinue"
@@ -59,7 +64,7 @@
 
 - name: Install Jenkins
   win_shell: |
-    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ lookup('env', 'JAVA_HOME') }}" /L*v "C:\Temp\jenkins.log"
+    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ java_home_result.strip() }}" /L*v "C:\Temp\jenkins.log"
   when: not jenkins_installed
 
 - name: Stop Jenkins service to apply port configuration
@@ -79,11 +84,6 @@
     attribute: "value"
     type: attribute
     fragment: "{{ jenkins_home }}"
-
-- name: Get JAVA_HOME
-  win_shell: |
-    [System.Environment]::GetEnvironmentVariable('JAVA_HOME')
-  register: java_home_result
 
 - name: Construct path to java.exe
   set_fact:
