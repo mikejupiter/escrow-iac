@@ -89,7 +89,7 @@ resource "aws_instance" "jumpbox" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "aws ec2 stop-instances --instance-ids ${aws_instance.jumpbox.id} && aws ec2 wait instance-stopped --instance-ids ${aws_instance.jumpbox.id}"
+    command = "aws ec2 stop-instances --instance-ids ${self.id} && aws ec2 wait instance-stopped --instance-ids ${self.id}"
   }
 }
 
