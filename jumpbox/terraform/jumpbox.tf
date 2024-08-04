@@ -85,6 +85,12 @@ resource "aws_instance" "jumpbox" {
     admin_password = var.admin_password
   })
   user_data_replace_on_change = true
+
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "aws ec2 stop-instances --instance-ids ${aws_instance.jumpbox.id} && aws ec2 wait instance-stopped --instance-ids ${aws_instance.jumpbox.id}"
+  }
 }
 
 resource "aws_eip_association" "eip_jumpbox_assoc" {
@@ -96,17 +102,4 @@ resource "aws_volume_attachment" "ebs_attachment" {
   device_name = "/dev/sdh"
   volume_id   = var.jumpbox_volume_id
   instance_id = aws_instance.jumpbox.id
-}
-
-resource "null_resource" "stop_instance_before_destroy" {
-  provisioner "local-exec" {
-    when    = "destroy"
-    command = "aws ec2 stop-instances --instance-ids ${aws_instance.jumpbox.id} && aws ec2 wait instance-stopped --instance-ids ${aws_instance.jumpbox.id}"
-  }
-
-  triggers = {
-    instance_id = aws_instance.jumpbox.id
-  }
-
-  depends_on = [aws_volume_attachment.ebs_attachment]
 }
