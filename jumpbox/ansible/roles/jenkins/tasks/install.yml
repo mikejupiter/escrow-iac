@@ -122,7 +122,7 @@
 
 - name: Download Jenkins Plugin Installation Manager Tool
   ansible.builtin.win_get_url:
-    url: "https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/2.13.0/jenkins-plugin-manager-2.13.0.jar"
+    url: "https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/{{ jenkins_plugin_manager_version }}/jenkins-plugin-manager-{{ jenkins_plugin_manager_version }}.jar"
     dest: "{{ jenkins_dir }}\\jenkins-plugin-manager"
   when: not jenkins_installed
 
@@ -138,7 +138,7 @@
 
 - name: Install Jenkins plugins
   ansible.builtin.win_command: >
-    {{ java_executable }} -jar {{ jenkins_dir }}\jenkins-plugin-manager\jenkins-plugin-manager-2.13.0.jar
+    {{ java_executable }} -jar {{ jenkins_dir }}\jenkins-plugin-manager\jenkins-plugin-manager-{{ jenkins_plugin_manager_version }}.jar
     --plugin-file {{ jenkins_dir }}\jenkins-plugin-manager\plugins.txt
     --war "{{ jenkins_dir }}\war\jenkins.war"
     --plugin-download-directory "{{ jenkins_home }}\plugins"

@@ -1,0 +1,24 @@
+---
+- name: Check if PuTTY is already installed
+  win_stat:
+    path: "{{ install_net_dir }}\Pytty\\putty.exe"
+  register: putty_installed
+
+- name: Download PuTTY Portable zip file
+  win_get_url:
+    url: "https://the.earth.li/~sgtatham/putty/latest/w64/putty.zip"
+    dest: "C:\\Temp\\putty.zip"
+  when: not putty_installed.stat.exists
+
+- name: Create destination directory
+  win_file:
+    path: "{{ install_net_dir }}\Pytty"
+    state: directory
+
+- name: Extract PuTTY Portable zip file
+  win_unzip:
+    src: "C:\\Temp\\putty.zip"
+    dest: "{{ install_net_dir }}\Pytty"
+    delete_archive: yes
+  when: not putty_installed.stat.exists
+

@@ -24,13 +24,13 @@
 
 - name: Ensure GitDuet directory exists
   win_file:
-    path: "C:\\Programs\\Dev\\GitDuet"
+    path: "{{ install_dev_dir }}\\GitDuet"
     state: directory
   when: not git_duet_installed.stat.exists
 
 - name: Extract Git Duet
   win_shell: |
-    tar -xzf C:\temp\windows_amd64.tar.gz -C C:\Programs\Dev\GitDuet
+    tar -xzf C:\temp\windows_amd64.tar.gz -C {{ install_dev_dir }}\GitDuet
   args:
     executable: powershell.exe
   when: not git_duet_installed.stat.exists
@@ -40,6 +40,6 @@
     state: present
     name: PATH
     value: >-
-      {{ (lookup('env', 'PATH') + ';C:\Programs\Dev\GitDuet') if lookup('env', 'PATH') else 'C:\Programs\Dev\GitDuet' }}
+      {{ (lookup('env', 'PATH') + ';{{ install_dev_dir }}\GitDuet') if lookup('env', 'PATH') else '{{ install_dev_dir }}\GitDuet' }}
     level: user
   when: not git_duet_installed.stat.exists

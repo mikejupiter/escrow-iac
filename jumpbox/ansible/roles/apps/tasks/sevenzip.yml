@@ -1,8 +1,8 @@
 ---
-- name: Install 7-Zip under C:\Programs\Tools\7Zip
+- name: Install 7-Zip under {{ install_tools_dir }}\7Zip
   win_chocolatey:
     name: 7zip.install
     state: present
-    install_args: '/D=C:\Programs\Tools\7Zip'
+    install_args: '/D={{ install_tools_dir }}\7Zip'
   environment:
     ChocolateyInstall: C:\ProgramData\chocolatey

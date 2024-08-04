@@ -1,0 +1,4 @@
+install_dir: "C:\\Programs"
+install_dev_dir: "{{ install_dir }}\\Dev"
+install_tools_dir: "{{ install_dir }}\\Tools"
+install_net_dir: "{{ install_dir }}\\Net"

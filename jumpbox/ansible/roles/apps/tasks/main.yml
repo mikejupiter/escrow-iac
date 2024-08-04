@@ -2,14 +2,20 @@
 - name: Install Chocolatey if not present
   import_tasks: choco.yml
 
-- name: Install 7-Zip under C:\Programs\Tools\7Zip
+- name: Install 7-Zip under
   import_tasks: sevenzip.yml
 
-- name: Install Firefox under C:\Programs\Inet\Firefox
+- name: Install Firefox
   import_tasks: firefox.yml
 
-- name: Install Git under C:\Programs\Dev
+- name: Install Git
   import_tasks: git.yml
 
-- name: Install Notepad++ to C:\Programs\Tools\Notepad++
+- name: Install Notepad++
   import_tasks: notepadpp.yml  
+
+- name: Install Putty
+  import_tasks: putty.yml  
+
+- name: Install TCPView
+  import_tasks: tcpview.yml  

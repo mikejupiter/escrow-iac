@@ -1,0 +1,27 @@
+---
+- name: Check if TCPView is already installed
+  win_stat:
+    path: "{{ install_net_dir }}\\TCPView\\TCPView.exe"
+  register: tcpview_installed
+
+- name: Download TCPView zip file
+  win_get_url:
+    url: "https://download.sysinternals.com/files/TCPView.zip"
+    dest: "C:\\Temp\\TCPView.zip"
+  when: not tcpview_installed.stat.exists
+
+- name: Extract TCPView zip file
+  community.windows.win_unzip:
+    src: "C:\\Temp\\TCPView.zip"
+    dest: "{{ install_net_dir }}\\TCPView"
+  when: not tcpview_installed.stat.exists    
+
+- name: Create TCPView shortcut on Desktop
+  community.windows.win_shortcut:
+    src: "{{ install_net_dir }}\\TCPView\\TCPView.exe"
+    dest: "{{ ansible_env.USERPROFILE }}\\Desktop\\TCPView.lnk"
+    description: "TCPView"
+    state: present
+  when: not tcpview_installed.stat.exists
+
+
