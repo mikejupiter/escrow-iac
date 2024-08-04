@@ -103,6 +103,11 @@
     type: text
     fragment: '-Xrs -Xmx1024m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar {{ jenkins_dir }}\jenkins.war --httpPort={{ jenkins_port }} --enable-future-java --webroot={{ jenkins_dir }}\war'   
 
+- name: Remove folder if it exists
+  win_file:
+    path: "{{ jenkins_home }}\\plugins"
+    state: absent
+
 - name: Ensure {{ jenkins_home }}\ref directory exists
   win_file:
     path: "{{ jenkins_home }}\\ref"
@@ -111,7 +116,7 @@
 - name: Copy plugin list file to Jenkins directory
   win_copy:
     src: plugins.txt
-    dest: "{{ jenkins_dir }}\\ref\\plugins.txt"
+    dest: "{{ jenkins_home }}\\ref\\plugins.txt"
   when: not jenkins_installed
 
 - name: Ensure Jenkins service is running
