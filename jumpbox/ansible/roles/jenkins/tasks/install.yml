@@ -124,7 +124,7 @@
 - name: Stop inheritance and remove existing ACLs for {{ jenkins_home }}
   win_acl_inheritance:
     path: "{{ jenkins_home }}"
-    state: clear
+    state: absent
 
 - name: Grant full control to JenkinsUser for {{ jenkins_home }}
   win_acl:
