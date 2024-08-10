@@ -121,13 +121,34 @@
     name: jenkins
     state: stopped  
 
-- name: Adjust ownership of the Jenkins HOME "{{ jenkins_home }}" directory
+- name: Stop inheritance and remove existing ACLs for {{ jenkins_home }}
+  win_acl_inheritance:
+    path: "{{ jenkins_home }}"
+    state: clear
+
+- name: Grant full control to JenkinsUser for {{ jenkins_home }}
   win_acl:
     path: "{{ jenkins_home }}"
     user: "{{ jenkins_user_name }}"
     rights: fullcontrol
     type: allow
-    state: present    
+    state: present
+
+- name: Grant full control to Administrators for {{ jenkins_home }}
+  win_acl:
+    path: "{{ jenkins_home }}"
+    user: Administrators
+    rights: fullcontrol
+    type: allow
+    state: present
+
+- name: Grant full control to SYSTEM for {{ jenkins_home }}
+  win_acl:
+    path: "{{ jenkins_home }}"
+    user: SYSTEM
+    rights: fullcontrol
+    type: allow
+    state: present
 
 - name: Remove folder if it exists
   win_file:
@@ -160,35 +181,38 @@
     type: text
     fragment: '-Xrs -Xmx1024m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar {{ jenkins_dir }}\jenkins.war --httpPort={{ jenkins_port }} --enable-future-java --webroot={{ jenkins_dir }}\war'   
 
-- name: Remove folder if it exists
-  win_file:
-    path: "{{ jenkins_home }}\\plugins"
-    state: absent
-  when: not jenkins_installed
+- name: Check there are no plugins
+  win_find:
+    paths: "{{ jenkins_home }}\\plugins"
+    recurse: no
+  register: dir_contents
+  changed_when: false
+  set_fact:
+    jenkins_plugins_installed: "{{ dir_contents.files | length > 0 }}"
 
 - name: Ensure jenkins-plugin-manager plugins directory exists
   ansible.builtin.win_file:
     path: "{{ jenkins_dir }}\\jenkins-plugin-manager"
     state: directory
-  when: not jenkins_installed
+  when: not jenkins_plugins_installed
 
 - name: Download Jenkins Plugin Installation Manager Tool
   ansible.builtin.win_get_url:
     url: "https://github.com/jenkinsci/plugin-installation-manager-tool/releases/download/{{ jenkins_plugin_manager_version }}/jenkins-plugin-manager-{{ jenkins_plugin_manager_version }}.jar"
     dest: "{{ jenkins_dir }}\\jenkins-plugin-manager"
-  when: not jenkins_installed
+  when: not jenkins_plugins_installed
 
 - name: Ensure Jenkins plugins directory exists
   ansible.builtin.win_file:
     path: "{{ jenkins_home }}\\plugins"
     state: directory
-  when: not jenkins_installed  
+  when: not jenkins_plugins_installed  
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
     src: plugins.txt
     dest: "{{ jenkins_dir }}\\jenkins-plugin-manager\\plugins.txt"
-  when: not jenkins_installed
+  when: not jenkins_plugins_installed
 
 - name: Install Jenkins plugins
   ansible.builtin.win_command: >
@@ -196,7 +220,7 @@
     --plugin-file {{ jenkins_dir }}\jenkins-plugin-manager\plugins.txt
     --war "{{ jenkins_dir }}\war\jenkins.war"
     --plugin-download-directory "{{ jenkins_home }}\plugins"
-  when: not jenkins_installed
+  when: not jenkins_plugins_installed
 
 - name: Configure Jenkins service to run as {{ jenkins_user_name }}
   win_service:
