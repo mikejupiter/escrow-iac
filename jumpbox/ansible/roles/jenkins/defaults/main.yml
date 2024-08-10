@@ -1,4 +1,5 @@
 jenkins_dir: "C:\\Programs\\Dev\\Jenkins"
 jenkins_home: "D:\\JenkinsHome"
+jenkins_user_name: "JenkinsUser"
 jenkins_port: 5555
 jenkins_plugin_manager_version: "2.13.0"

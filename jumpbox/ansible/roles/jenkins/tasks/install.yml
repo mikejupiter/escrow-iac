@@ -60,6 +60,13 @@
 #     follow_redirects: all
 #   when: not jenkins_installed
 
+# - name: Download Jenkins MSI
+#   win_shell: |
+#     [Net.ServicePointManager]::SecurityProtocol = “Tls, Tls11, Tls12, Ssl3”
+
+#     Start-BitsTransfer -Source "https://mirrors.jenkins.io/windows/latest" -Destination "C:\\Temp\\jenkins.msi"
+#   when: not jenkins_installed
+
 # - name:  Download Jenkins MSI using PowerShell
 #   win_shell: |
 #     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -69,13 +76,21 @@
 
 - name: Install Jenkins
   win_shell: |
-    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ java_home_result }}" /L*v "C:\Temp\jenkins.log"
+    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ java_home_result }}" SERVICE_USERNAME="{{ jenkins_user_name }}" SERVICE_PASSWORD="{{ jenkins_user_password }}" /L*v "C:\Temp\jenkins.log"
   when: not jenkins_installed
 
 - name: Stop Jenkins service to apply port configuration
   win_service:
     name: jenkins
     state: stopped
+
+- name: Adjust ownership of the Jenkins HOME "{{ jenkins_home }}" directory
+  win_acl:
+    path: "{{ jenkins_home }}"
+    user: "{{ jenkins_user_name }}"
+    rights: fullcontrol
+    type: allow
+    state: present    
 
 - name: Remove folder if it exists
   win_file:
