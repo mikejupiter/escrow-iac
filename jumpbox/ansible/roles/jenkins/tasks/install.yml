@@ -202,8 +202,7 @@
   win_service:
     name: Jenkins
     start_mode: auto
-    start: yes
-    account: ".\\{{ jenkins_user_name }}"
+    username: ".\\{{ jenkins_user_name }}"
     password: "{{ jenkins_user_password }}"
     path: "{{ jenkins_dir }}\\jenkins.exe"
     state: started
