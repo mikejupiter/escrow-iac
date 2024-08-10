@@ -124,31 +124,20 @@
 - name: Stop inheritance and remove existing ACLs for {{ jenkins_home }}
   win_acl_inheritance:
     path: "{{ jenkins_home }}"
+    reorganize: true
     state: absent
 
-- name: Grant full control to JenkinsUser for {{ jenkins_home }}
+- name: Ensure only JenkinsUser, Administrators, and SYSTEM have access for {{ jenkins_home }}
   win_acl:
     path: "{{ jenkins_home }}"
-    user: "{{ jenkins_user_name }}"
+    user: "{{ item }}"
     rights: fullcontrol
     type: allow
     state: present
-
-- name: Grant full control to Administrators for {{ jenkins_home }}
-  win_acl:
-    path: "{{ jenkins_home }}"
-    user: Administrators
-    rights: fullcontrol
-    type: allow
-    state: present
-
-- name: Grant full control to SYSTEM for {{ jenkins_home }}
-  win_acl:
-    path: "{{ jenkins_home }}"
-    user: SYSTEM
-    rights: fullcontrol
-    type: allow
-    state: present
+  loop:
+    - "{{ jenkins_user_name }}"
+    - Administrators
+    - SYSTEM
 
 - name: Remove folder if it exists
   win_file:
