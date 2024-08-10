@@ -182,11 +182,13 @@
   ansible.builtin.win_file:
     path: "{{ jenkins_home }}\\plugins"
     state: directory
+  when: not jenkins_installed  
 
 - name: Copy plugin list file to Jenkins directory
   win_copy:
     src: plugins.txt
     dest: "{{ jenkins_dir }}\\jenkins-plugin-manager\\plugins.txt"
+  when: not jenkins_installed
 
 - name: Install Jenkins plugins
   ansible.builtin.win_command: >
@@ -194,6 +196,7 @@
     --plugin-file {{ jenkins_dir }}\jenkins-plugin-manager\plugins.txt
     --war "{{ jenkins_dir }}\war\jenkins.war"
     --plugin-download-directory "{{ jenkins_home }}\plugins"
+  when: not jenkins_installed
 
 - name: Configure Jenkins service to run as {{ jenkins_user_name }}
   win_service:
@@ -204,4 +207,3 @@
     password: "{{ jenkins_user_password }}"
     path: "{{ jenkins_dir }}\\jenkins.exe"
     state: started
-  when: jenkins_installed  
