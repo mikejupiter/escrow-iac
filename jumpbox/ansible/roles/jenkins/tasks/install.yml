@@ -14,7 +14,6 @@
   set_fact:
     java_home_result: "{{ java_home.stdout.strip() }}"
 
-
 - name: Check if Jenkins service exists
   win_command: |
     powershell -Command "Get-Service -Name jenkins -ErrorAction SilentlyContinue"
@@ -65,14 +64,6 @@
     rights: Modify
     type: allow
     recursive: yes
-
-- name: Set JENKINS_HOME environment variable
-  win_environment:
-    state: present
-    name: JENKINS_HOME
-    value: "{{ jenkins_home }}"
-    level: machine
-  when: not jenkins_installed
 
 - name: Ensure C:\\Temp directory exists
   win_file:
@@ -127,6 +118,16 @@
     reorganize: true
     state: absent
 
+
+- name: Remove all old ACL users from {{ jenkins_home }}
+  win_shell: |
+    $acl = Get-Acl -Path D:\JenkinsHome
+    Foreach($access in $acl.access) 
+    {
+        $acl.RemoveAccessRule($access)    
+    }
+    Set-Acl -path D:\JenkinsHome -aclObject $acl
+  
 - name: Ensure only JenkinsUser, Administrators, and SYSTEM have access for {{ jenkins_home }}
   win_acl:
     path: "{{ jenkins_home }}"
