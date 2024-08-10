@@ -35,7 +35,36 @@
   win_file:
     path: "{{ jenkins_dir }}"
     state: directory
-  when: not jenkins_installed  
+  when: not jenkins_installed
+
+- name: Create {{ jenkins_user_name }} with a password
+  win_user:
+    name: "{{ jenkins_user_name }}"
+    password: "{{ jenkins_user_password }}"
+    password_never_expires: yes
+    state: present
+
+- name: Grant "{{ jenkins_user_name }}" "Logon as a Service" right
+  win_user_right:
+    name: SeServiceLogonRight
+    users:
+      - "{{ jenkins_user_name }}"
+
+- name: Set permissions on Jenkins installation directory
+  win_acl:
+    path: "{{ jenkins_dir }}"
+    user: "{{ jenkins_user_name }}"
+    rights: FullControl
+    type: allow
+    recursive: yes
+
+- name: Set permissions on Jenkins workspace directory
+  win_acl:
+    path: "{{ jenkins_home }}"
+    user: "{{ jenkins_user_name }}"
+    rights: Modify
+    type: allow
+    recursive: yes
 
 - name: Set JENKINS_HOME environment variable
   win_environment:
