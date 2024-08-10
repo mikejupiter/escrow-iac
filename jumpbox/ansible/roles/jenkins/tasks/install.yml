@@ -181,14 +181,15 @@
     type: text
     fragment: '-Xrs -Xmx1024m -Dhudson.lifecycle=hudson.lifecycle.WindowsServiceLifecycle -jar {{ jenkins_dir }}\jenkins.war --httpPort={{ jenkins_port }} --enable-future-java --webroot={{ jenkins_dir }}\war'   
 
-- name: Check there are no plugins
+- name: Find files in the plugins dir
   win_find:
     paths: "{{ jenkins_home }}\\plugins"
     recurse: no
-  register: dir_contents
-  changed_when: false
+  register: plugins_dir_contents
+
+- name: Set fact if jenkins plugins directory is not empty
   set_fact:
-    jenkins_plugins_installed: "{{ dir_contents.files | length > 0 }}"
+    jenkins_plugins_installed: "{{ plugins_dir_contents.files | length > 0 }}"
 
 - name: Ensure jenkins-plugin-manager plugins directory exists
   ansible.builtin.win_file:
