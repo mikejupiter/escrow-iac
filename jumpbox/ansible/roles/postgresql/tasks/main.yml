@@ -4,14 +4,17 @@
     paths: "{{ postgres_dir }}\\pgsql\\bin"
     patterns: initdb.exe
   register: pg_binaries
+  tags: pg
 
 - name: Install PostgreSQL
   import_tasks: install.yml
   when: pg_binaries.matched == 0
+  tags: pg
 
 - name: Configure PostgreSQL
   import_tasks: configure_db.yml
+  tags: pg
 
 - name: Setup PostgreSQL user
   import_tasks: user_setup.yml
-  tags: set_db_pass 
+  tags: [ pg, set_db_pass ] 

@@ -103,15 +103,23 @@
 #     $client.DownloadFile("https://mirrors.jenkins.io/windows/latest", "C:\\Temp\\jenkins.msi")
 #   when: not jenkins_installed
 
+# Please note that we was not able to run install with
+# SERVICE_USERNAME="{{ jenkins_user_name }}" SERVICE_PASSWORD="{{ jenkins_user_password }}" 
+# there are some user permission issue:
+# -- Error 1923. Service 'Jenkins' (Jenkins) could not be installed.  Verify that you have sufficient privileges to install system services.
+#
+# also script output reveal the password
+# We will change the user on the service when will change other parameters like port
+
 - name: Install Jenkins
   win_shell: |
-    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ java_home_result }}" SERVICE_USERNAME="{{ jenkins_user_name }}" SERVICE_PASSWORD="{{ jenkins_user_password }}" /L*v "C:\Temp\jenkins.log"
+    msiexec.exe /i "D:\\Install\\jenkins.msi" /qn /norestart JENKINSDIR="{{ jenkins_dir }}" JAVA_HOME="{{ java_home_result }}" /L*v "C:\Temp\jenkins.log"
   when: not jenkins_installed
 
 - name: Stop Jenkins service to apply port configuration
   win_service:
     name: jenkins
-    state: stopped
+    state: stopped  
 
 - name: Adjust ownership of the Jenkins HOME "{{ jenkins_home }}" directory
   win_acl:
@@ -187,15 +195,13 @@
     --war "{{ jenkins_dir }}\war\jenkins.war"
     --plugin-download-directory "{{ jenkins_home }}\plugins"
 
-- name: Ensure Jenkins service is running
+- name: Configure Jenkins service to run as {{ jenkins_user_name }}
   win_service:
-    name: jenkins
+    name: Jenkins
     start_mode: auto
+    start: yes
+    account: ".\\{{ jenkins_user_name }}"
+    password: "{{ jenkins_user_password }}"
+    path: "{{ jenkins_dir }}\\jenkins.exe"
     state: started
-
-# - name: Wait for Jenkins to start
-#   win_wait_for:
-#     path: http://localhost:{{ jenkins_port }}
-#     state: started
-#     delay: 30
-#   when: not jenkins_installed
+  when: jenkins_installed  

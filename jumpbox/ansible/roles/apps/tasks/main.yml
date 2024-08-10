@@ -1,21 +1,28 @@
 ---
 - name: Install Chocolatey if not present
   import_tasks: choco.yml
+  tags: [ apps, zip, notepad, git ]
 
 - name: Install 7-Zip under
   import_tasks: sevenzip.yml
+  tags: [ apps, zip ]
 
 - name: Install Firefox
   import_tasks: firefox.yml
+  tags: [ apps, firefox ]
 
 - name: Install Git
   import_tasks: git.yml
+  tags: [ apps, git ]
 
 - name: Install Notepad++
-  import_tasks: notepadpp.yml  
+  import_tasks: notepadpp.yml
+  tags: [ apps, notepad ]
 
 - name: Install Putty
-  import_tasks: putty.yml  
+  import_tasks: putty.yml
+  tags: [ apps, putty ]
 
 - name: Install TCPView
-  import_tasks: tcpview.yml  
+  import_tasks: tcpview.yml
+  tags: [ apps, tcpview ]  

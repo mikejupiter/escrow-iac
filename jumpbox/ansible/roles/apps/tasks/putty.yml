@@ -1,7 +1,7 @@
 ---
 - name: Check if PuTTY is already installed
   win_stat:
-    path: "{{ install_net_dir }}\Pytty\\putty.exe"
+    path: "{{ install_net_dir }}\\Pytty\\putty.exe"
   register: putty_installed
 
 - name: Download PuTTY Portable zip file
@@ -12,13 +12,13 @@
 
 - name: Create destination directory
   win_file:
-    path: "{{ install_net_dir }}\Pytty"
+    path: "{{ install_net_dir }}\\Pytty"
     state: directory
 
 - name: Extract PuTTY Portable zip file
   win_unzip:
     src: "C:\\Temp\\putty.zip"
-    dest: "{{ install_net_dir }}\Pytty"
+    dest: "{{ install_net_dir }}\\Pytty"
     delete_archive: yes
   when: not putty_installed.stat.exists
 
