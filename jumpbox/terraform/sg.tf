@@ -38,7 +38,7 @@ resource "aws_security_group" "winrm_sg" {
   }
 }
 
-resource "aws_security_group" "allow_https_sg" {
+resource "aws_security_group" "https_sg" {
   name        = "allow_https"
   description = "Allow HTTPS"
 
@@ -84,7 +84,7 @@ resource "aws_security_group" "pg_sg" {
 }
 
 # Create a security group for MasterJenkins access
-resource "aws_security_group" "allow_master_jenkins_sg" {
+resource "aws_security_group" "master_jenkins_sg" {
   name        = "allow_master_jenkins"
   description = "Allow Jenkins Master traffic for Ansible"
 
@@ -103,7 +103,7 @@ resource "aws_security_group" "allow_master_jenkins_sg" {
   }
 }
 
-resource "aws_security_group" "allow_jenkins_callback_sg" {
+resource "aws_security_group" "jenkins_callback_sg" {
   name        = "allow_jenkins_callback"
   description = "Callback master"
 
