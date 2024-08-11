@@ -23,12 +23,10 @@ resource "aws_instance" "jumpbox" {
   }
 
   security_groups = [
-    aws_security_group.rdp_sg.name,
-    aws_security_group.winrm_sg.name,
+    aws_security_group.win_management_sg.name,
     aws_security_group.https_sg.name,
     aws_security_group.pg_sg.name,
-    aws_security_group.master_jenkins_sg.name,
-    aws_security_group.jenkins_callback_sg.name
+    aws_security_group.jenkins_sg.name
   ]
 
   # User data script to enable WinRM for Ansible

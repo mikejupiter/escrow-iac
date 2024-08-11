@@ -1,7 +1,7 @@
 # Create a security group for RDP access
-resource "aws_security_group" "rdp_sg" {
-  name        = "allow_rdp"
-  description = "Allow RDP traffic from your IP address"
+resource "aws_security_group" "win_management_sg" {
+  name        = "allow_win_mgt"
+  description = "Allow RDP and WinRM traffic from your IP address"
 
   ingress {
     from_port   = 3389
@@ -10,24 +10,11 @@ resource "aws_security_group" "rdp_sg" {
     cidr_blocks = ["0.0.0.0/0"]  
   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-# Create a security group for WinRM access
-resource "aws_security_group" "winrm_sg" {
-  name        = "allow_winrm"
-  description = "Allow WinRM traffic for Ansible"
-
   ingress {
     from_port   = 5986
     to_port     = 5986
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Replace with your internal network CIDR
+    cidr_blocks = ["0.0.0.0/0"]  
   }
 
   egress {
@@ -84,8 +71,8 @@ resource "aws_security_group" "pg_sg" {
 }
 
 # Create a security group for MasterJenkins access
-resource "aws_security_group" "master_jenkins_sg" {
-  name        = "allow_master_jenkins"
+resource "aws_security_group" "jenkins_sg" {
+  name        = "allow_jenkins"
   description = "Allow Jenkins Master traffic for Ansible"
 
   ingress {
@@ -94,18 +81,6 @@ resource "aws_security_group" "master_jenkins_sg" {
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
   }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "jenkins_callback_sg" {
-  name        = "allow_jenkins_callback"
-  description = "Callback master"
 
   ingress {
     from_port   = 5555
