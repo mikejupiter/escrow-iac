@@ -11,59 +11,6 @@ resource "aws_key_pair" "jumpbox_key" {
   public_key = file("../../secrets/jumpbox_id_rsa.pub")  
 }
 
-# Create a security group for RDP access
-resource "aws_security_group" "rdp_sg" {
-  name        = "allow_rdp"
-  description = "Allow RDP traffic from your IP address"
-
-  ingress {
-    from_port   = 3389
-    to_port     = 3389
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-# Create a security group for WinRM access
-resource "aws_security_group" "winrm_sg" {
-  name        = "allow_winrm"
-  description = "Allow WinRM traffic for Ansible"
-
-  ingress {
-    from_port   = 5986
-    to_port     = 5986
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Replace with your internal network CIDR
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "pg_sg" {
-  name        = "allow_postgres"
-  description = "Allow Postgres traffic from your IP address"
-
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]  
-  }
-
-}
-
 resource "aws_instance" "jumpbox" {
   ami           = "ami-0f9c44e98edf38a2b"  # 64-bit (x86) Microsoft Windows 2022 Datacenter edition. [English]
   instance_type = "t2.medium"
@@ -77,7 +24,10 @@ resource "aws_instance" "jumpbox" {
 
   security_groups = [
     aws_security_group.rdp_sg.name,
-    aws_security_group.winrm_sg.name
+    aws_security_group.winrm_sg.name,
+    pg_sg,
+    allow_master_jenkins_sg,
+    allow_jenkins_callback_sg
   ]
 
   # User data script to enable WinRM for Ansible
@@ -97,4 +47,15 @@ resource "aws_volume_attachment" "ebs_attachment" {
   device_name = "/dev/sdh"
   volume_id   = var.jumpbox_volume_id
   instance_id = aws_instance.jumpbox.id
+}
+
+resource "aws_route53_record" "jumpbox_private_ip" {
+  zone_id = var.route53_zone_id  # Your Route 53 hosted zone ID
+  name    = "jenkins.private"    # Your custom internal DNS name
+  type    = "A"
+
+  ttl     = 60
+  records = [aws_instance.jumpbox.private_ip]  # Use the private IP of the instance
+
+  depends_on = [aws_instance.jumpbox]
 }

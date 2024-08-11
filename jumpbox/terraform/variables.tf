@@ -22,3 +22,8 @@ variable "jumpbox_volume_id" {
   description = "The ID of the EBS volume to attach Jumpbox persisted data"
   type        = string
 }
+
+variable "route53_zone_id" {
+  description = "The ID of private Route53 zone"
+  type        = string
+}

@@ -78,6 +78,9 @@ try {
     # Configure Windows Firewall to allow RDP
     New-NetFirewallRule -DisplayName "Allow RDP" -Direction Inbound -LocalPort 3389 -Protocol TCP -Action Allow
     New-NetFirewallRule -DisplayName "Allow WinRM" -Direction Inbound -LocalPort 5986 -Protocol TCP -Action Allow
+    New-NetFirewallRule -DisplayName "Allow HTTPS" -Direction Inbound -LocalPort 443 -Protocol TCP -Action Allow
+    New-NetFirewallRule -DisplayName "Allow Master Jenkins" -Direction Inbound -LocalPort 50000 -Protocol TCP -Action Allow
+    New-NetFirewallRule -DisplayName "Allow Jenkins Callback" -Direction Inbound -LocalPort 5555 -Protocol TCP -Action Allow
 
     Add-Content -Path $LogFile -Value "Firewall RDP and WinRM has been opened"
 
