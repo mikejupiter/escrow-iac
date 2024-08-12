@@ -8,12 +8,12 @@
   win_get_url:
     url: https://github.com/mucommander/mucommander/releases/download/1.5.0-1/mucommander-1.5.0.msi
     dest: "C:\\Temp\\mucommander-1.5.0.msi"
-  when: not mucommander_exe.exists
+  when: not mucommander_exe.stat.exists
 
 - name: Install muCommander
   win_package:
     path: "C:\\Temp\\mucommander-1.5.0.msi"
     product_id: muCommander
     arguments: '/quiet /norestart INSTALLDIR="{{ install_tools_dir }}\\muCommander"'
-  when: not mucommander_exe.exists
+  when: not mucommander_exe.stat.exists
 
