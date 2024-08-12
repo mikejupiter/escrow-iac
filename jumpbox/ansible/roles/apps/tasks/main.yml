@@ -26,3 +26,7 @@
 - name: Install TCPView
   import_tasks: tcpview.yml
   tags: [ apps, tcpview ]  
+
+- name: Install muCommander
+  import_tasks: mucommander.yml
+  tags: [ apps, mucomander ]  
