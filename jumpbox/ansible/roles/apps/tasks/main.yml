@@ -29,4 +29,4 @@
 
 - name: Install muCommander
   import_tasks: mucommander.yml
-  tags: [ apps, mucomander ]  
+  tags: [ apps, mucommander ]  
