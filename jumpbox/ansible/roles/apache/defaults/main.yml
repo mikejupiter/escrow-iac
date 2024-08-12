@@ -1,0 +1,5 @@
+apache_version: "2.4.62-240718"
+apache_runtime: "VS17"
+
+install_dir: "C:\\Programs"
+install_net_dir: "{{ install_dir }}\\Net"

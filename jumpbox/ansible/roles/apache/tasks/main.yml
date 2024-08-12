@@ -1,0 +1,4 @@
+---
+- name: Install Apache
+  import_tasks: install.yml
+  tags: apache

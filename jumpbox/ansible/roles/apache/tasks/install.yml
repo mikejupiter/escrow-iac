@@ -1,0 +1,36 @@
+---
+- name: Check if Apache is already installed
+  win_stat:
+    path: "{{ install_net_dir }}\\Apache24\\bin\\httpd.exe"
+  register: apache_installed
+
+- name: Ensure Apache directory exists
+  win_file:
+    path: "{{ install_net_dir }}\\Apache24"
+    state: directory
+
+- name: Download Apache HTTP Server
+  win_get_url:
+    url: "https://www.apachelounge.com/download/{{ apache_runtime }}/binaries/httpd-{{ apache_version }}-win64-{{ apache_runtime }}.zip"
+    dest: "C:\\Temp\\httpd.zip"
+  when: not apache_installed.stat.exists
+
+- name: Unzip Apache HTTP Server
+  win_unzip:
+    src: "C:\\Temp\\httpd.zip"
+    dest: "{{ install_net_dir }}"
+    creates: "{{ install_net_dir }}\\Apache24\\bin\\httpd.exe"
+  when: not apache_installed.stat.exists
+
+- name: Install Apache as a service
+  win_shell: |
+    {{ install_net_dir }}\Apache24\bin\httpd.exe -k install
+  args:
+    creates: {{ install_net_dir }}\Apache24\logs\httpd.pid
+  when: not apache_installed.stat.exists
+  
+- name: Start Apache service
+  win_service:
+    name: Apache2.4
+    start_mode: auto
+    state: started
