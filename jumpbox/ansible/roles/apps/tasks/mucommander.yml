@@ -8,7 +8,7 @@
   win_package:
     path: "C:\\Temp\\mucommander-1.5.0.msi"
     product_id: muCommander
-    arguments: "/quiet /norestart INSTALLDIR="{{ install_tools_dir }}\\muCommander"
+    arguments: '/quiet /norestart INSTALLDIR="{{ install_tools_dir }}\\muCommander"'
   register: mucommander_install
 
 - name: Ensure muCommander is installed
