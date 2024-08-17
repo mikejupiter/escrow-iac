@@ -1,3 +1,4 @@
+---
 - name: Verify Certbot installation
   win_stat:
     path: C:\Programs\Net\Certbot\bin\certbot.exe
@@ -13,7 +14,7 @@
   win_shell: |
     C:\Temp\certbot-installer.exe /S /INSTDIR=C:\Programs\Net\Certbot
   when: not certbot_aready_installed.stat.exists
-  
+
 - name: Verify Certbot installation
   win_stat:
     path: C:\Programs\Net\Certbot\bin\certbot.exe
@@ -21,4 +22,4 @@
 
 - name: Debug installation result
   debug:
-    var: certbot_installed.exists
+    var: certbot_installed.stat.exists
