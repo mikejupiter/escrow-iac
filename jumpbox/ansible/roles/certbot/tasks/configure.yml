@@ -1,0 +1,4 @@
+
+
+powershel.exe
+-NoProfile -WindowStyle Hidden -Command "certbot renew"

@@ -2,3 +2,9 @@
 - name: Install Apache
   import_tasks: install.yml
   tags: apache
+- name: Configure Apache
+  import_tasks: configure.yml
+  tags: apache
+- name: Start Apache
+  import_tasks: start.yml
+  tags: apache

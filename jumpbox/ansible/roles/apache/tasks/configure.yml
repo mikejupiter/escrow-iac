@@ -1,0 +1,28 @@
+---
+- name: Create directory for website
+  win_file:
+    path: C:\Apache24\Apache24\sites\example.com
+    state: directory
+
+- name: Create index.html for the site
+  win_copy:
+    content: "<html><body><h1>Welcome to example.com</h1></body></html>"
+    dest: C:\Apache24\Apache24\sites\example.com\index.html
+
+- name: Configure Apache virtual host
+  win_lineinfile:
+    path: C:\Apache24\Apache24\conf\httpd.conf
+    line: |
+      <VirtualHost *:80>
+          ServerAdmin admin@example.com
+          DocumentRoot "C:/Apache24/Apache24/sites/example.com"
+          ServerName example.com
+          ErrorLog "logs/example.com-error.log"
+          CustomLog "logs/example.com-access.log" common
+      </VirtualHost>
+    insertafter: '^# Virtual hosts$'
+
+- name: Ensure Apache service is restarted
+  win_service:
+    name: Apache2.4
+    state: restarted

@@ -3,3 +3,5 @@ apache_runtime: "VS17"
 
 install_dir: "C:\\Programs"
 install_net_dir: "{{ install_dir }}\\Net"
+
+apache_log_dir: "D:\\logs\\apache"

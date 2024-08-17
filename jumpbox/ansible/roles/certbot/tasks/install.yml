@@ -1,0 +1,24 @@
+- name: Verify Certbot installation
+  win_stat:
+    path: C:\Programs\Net\Certbot\bin\certbot.exe
+  register: certbot_aready_installed
+
+- name: Download Certbot installer
+  win_get_url:
+    url: https://github.com/certbot/certbot/releases/download/v2.9.0/certbot-beta-installer-win_amd64_signed.exe
+    dest: C:\Temp\certbot-installer.exe
+  when: not certbot_aready_installed.stat.exists
+
+- name: Extract Certbot installer files
+  win_shell: |
+    C:\Temp\certbot-installer.exe /S /INSTDIR=C:\Programs\Net\Certbot
+  when: not certbot_aready_installed.stat.exists
+  
+- name: Verify Certbot installation
+  win_stat:
+    path: C:\Programs\Net\Certbot\bin\certbot.exe
+  register: certbot_installed
+
+- name: Debug installation result
+  debug:
+    var: certbot_installed.exists

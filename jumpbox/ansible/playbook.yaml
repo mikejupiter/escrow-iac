@@ -7,4 +7,5 @@
     - postgresql
     - java
     - jenkins
+    - certbot
     - apache
