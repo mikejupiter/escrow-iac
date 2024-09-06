@@ -29,50 +29,55 @@ resource "aws_s3_bucket_lifecycle_configuration" "nj_photos_dev_lifecycle" {
   }
 }
 
-
-# Create the IAM role that will have access to the S3 bucket
+# Create the IAM Role with an S3 Access Policy
 resource "aws_iam_role" "nj_photos_dev_writer_role" {
-  name = "nj-photos-dev-writer-role"
-
-  # Trust policy to allow the IAM user to assume this role
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = {
-          AWS = aws_iam_user.nj_photos_dev_writer_user.arn  # Allow the specific IAM user to assume this role
-        },
-        Action = "sts:AssumeRole"
+  name               = "nj-photos-dev-writer-role"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
       },
-    ],
-  })
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
 }
 
-# Attach a policy to the role to allow S3 bucket access
-resource "aws_iam_role_policy" "nj_photos_dev_writer_policy" {
-  name = "nj-photos-dev-writer-policy"
-  role = aws_iam_role.nj_photos_dev_writer_role.id
+# Attach policy to allow access to the specific S3 bucket
+resource "aws_iam_policy" "nj_photos_dev_writer_policy" {
+  name        = "nj-photos-dev-writer-policy"
+  description = "Policy to allow access to the nj_photos_dev bucket"
+  policy      = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "arn:aws:s3:::${aws_s3_bucket.nj_photos_dev.id}",
+        "arn:aws:s3:::${aws_s3_bucket.nj_photos_dev.id}/*"
+      ]
+    }
+  ]
+}
+EOF
+}
 
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = [
-          "s3:PutObject",
-          "s3:GetObject",
-          "s3:DeleteObject"
-        ],
-        Resource = "${aws_s3_bucket.nj_photos_dev.arn}/*"  # Use bucket ARN reference
-      },
-      {
-        Effect = "Allow",
-        Action = "s3:ListBucket",
-        Resource = aws_s3_bucket.nj_photos_dev.arn  # List objects in the bucket
-      },
-    ],
-  })
+# Attach the policy to the role
+resource "aws_iam_role_policy_attachment" "attach_nj_photos_dev_writer_policy" {
+  role       = aws_iam_role.nj_photos_dev_writer_role.name
+  policy_arn = aws_iam_policy.nj_photos_dev_writer_policy.arn
 }
 
 # Create an IAM user who will assume the role
@@ -80,21 +85,22 @@ resource "aws_iam_user" "nj_photos_dev_writer_user" {
   name = "nj-photos-dev-writer-user"
 }
 
-# Allow the IAM user to assume the role via sts:AssumeRole
-resource "aws_iam_user_policy" "s3_access_user_policy" {
-  name = "s3_access_user_policy"
-  user = aws_iam_user.nj_photos_dev_writer_user.name
-
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Action = "sts:AssumeRole",
-        Resource = aws_iam_role.nj_photos_dev_writer_role.arn 
-      },
-    ],
-  })
+# 6. Attach AssumeRole policy to the user to allow assuming the nj_photos_dev_writer_role
+resource "aws_iam_user_policy" "nj_photos_dev_writer_user_assume_role_policy" {
+  name   = "AllowAssumeRole"
+  user   = aws_iam_user.nj_photos_dev_writer_user.name
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "sts:AssumeRole",
+      "Resource": "${aws_iam_role.nj_photos_dev_writer_role.arn}"
+    }
+  ]
+}
+EOF
 }
 
 resource "aws_iam_access_key" "s3_access_user_access_key" {
