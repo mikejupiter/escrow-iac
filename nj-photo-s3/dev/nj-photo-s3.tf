@@ -102,11 +102,11 @@ resource "aws_iam_access_key" "s3_access_user_access_key" {
 }
 
 output "access_key_id" {
-  value     = aws_iam_access_key.nj_photos_dev_writer_user.id
+  value     = aws_iam_access_key.s3_access_user_access_key.id
   sensitive = true
 }
 
 output "secret_access_key" {
-  value     = aws_iam_access_key.nj_photos_dev_writer_user.secret
+  value     = aws_iam_access_key.s3_access_user_access_key.secret
   sensitive = true
 }
