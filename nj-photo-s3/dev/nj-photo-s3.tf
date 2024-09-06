@@ -83,7 +83,7 @@ resource "aws_iam_user" "nj_photos_dev_writer_user" {
 # Allow the IAM user to assume the role via sts:AssumeRole
 resource "aws_iam_user_policy" "s3_access_user_policy" {
   name = "s3_access_user_policy"
-  user = aws_iam_user.s3_access_user.name
+  user = aws_iam_user.nj_photos_dev_writer_user.name
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -98,7 +98,7 @@ resource "aws_iam_user_policy" "s3_access_user_policy" {
 }
 
 resource "aws_iam_access_key" "s3_access_user_access_key" {
-  user = aws_iam_user.s3_access_user.name
+  user = aws_iam_user.nj_photos_dev_writer_user.name
 }
 
 output "access_key_id" {
