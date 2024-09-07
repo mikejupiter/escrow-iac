@@ -29,30 +29,17 @@ resource "aws_s3_bucket_lifecycle_configuration" "nj_photos_dev_lifecycle" {
   }
 }
 
-# Create the IAM Role with an S3 Access Policy
-resource "aws_iam_role" "nj_photos_dev_writer_role" {
-  name               = "nj-photos-dev-writer-role"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-EOF
+# Create an IAM user who will assume the role
+resource "aws_iam_user" "nj_photos_dev_writer_user" {
+  name = "nj-photos-dev-writer-user"
 }
 
-# Attach policy to allow access to the specific S3 bucket
-resource "aws_iam_policy" "nj_photos_dev_writer_policy" {
-  name        = "nj-photos-dev-writer-policy"
-  description = "Policy to allow access to the nj_photos_dev bucket"
-  policy      = <<EOF
+# Attach a policy to the user for S3 bucket access
+resource "aws_iam_user_policy" "nj_photos_dev_writer_user_policy" {
+  name = "S3UserPolicy"
+  user = aws_iam_user.nj_photos_dev_writer_user.name
+
+  policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -68,35 +55,6 @@ resource "aws_iam_policy" "nj_photos_dev_writer_policy" {
         "arn:aws:s3:::${aws_s3_bucket.nj_photos_dev.id}",
         "arn:aws:s3:::${aws_s3_bucket.nj_photos_dev.id}/*"
       ]
-    }
-  ]
-}
-EOF
-}
-
-# Attach the policy to the role
-resource "aws_iam_role_policy_attachment" "attach_nj_photos_dev_writer_policy" {
-  role       = aws_iam_role.nj_photos_dev_writer_role.name
-  policy_arn = aws_iam_policy.nj_photos_dev_writer_policy.arn
-}
-
-# Create an IAM user who will assume the role
-resource "aws_iam_user" "nj_photos_dev_writer_user" {
-  name = "nj-photos-dev-writer-user"
-}
-
-# 6. Attach AssumeRole policy to the user to allow assuming the nj_photos_dev_writer_role
-resource "aws_iam_user_policy" "nj_photos_dev_writer_user_assume_role_policy" {
-  name   = "AllowAssumeRole"
-  user   = aws_iam_user.nj_photos_dev_writer_user.name
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "sts:AssumeRole",
-      "Resource": "${aws_iam_role.nj_photos_dev_writer_role.arn}"
     }
   ]
 }
