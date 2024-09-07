@@ -36,7 +36,7 @@ resource "aws_iam_user" "nj_photos_dev_writer_user" {
 
 # Attach a policy to the user for S3 bucket access
 resource "aws_iam_user_policy" "nj_photos_dev_writer_user_policy" {
-  name = "S3UserPolicy"
+  name = "nj-photos-dev-writer-user-policy"
   user = aws_iam_user.nj_photos_dev_writer_user.name
 
   policy = <<EOF
