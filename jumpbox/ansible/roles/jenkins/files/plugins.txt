@@ -78,6 +78,7 @@ mina-sshd-api-core:latest
 node-iterator-api:latest
 okhttp-api:latest
 pam-auth:latest
+pipeline-aws:latest
 pipeline-build-step:latest
 pipeline-github-lib:latest
 pipeline-graph-analysis:latest
