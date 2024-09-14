@@ -7,6 +7,10 @@
   import_tasks: sevenzip.yml
   tags: [ apps, zip ]
 
+- name: Install terraform
+  import_tasks: terraform.yml
+  tags: [ apps, terraform ]   
+
 - name: Install Firefox
   import_tasks: firefox.yml
   tags: [ apps, firefox ]

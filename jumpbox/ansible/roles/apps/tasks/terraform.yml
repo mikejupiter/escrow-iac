@@ -1,0 +1,32 @@
+---
+
+- name: Check if Terraform is already installed
+  win_stat:
+    path: "{{ install_tools_dir }}\\Terraform\\terraform.exe"
+  register: terraform_installed
+
+- name: Download Terraform zip
+  win_get_url:
+    url: "https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_windows_amd64.zip"
+    dest: "C:\\temp\\terraform.zip"
+  when: not terraform_installed.stat.exists
+  
+- name: Unzip Terraform to Program Files
+  win_unzip:
+    src: "C:\\temp\\terraform.zip"
+    dest: "{{ install_tools_dir }}\\Terraform"
+    creates: "{{ install_tools_dir }}\\Terraform\\terraform.exe"
+  when: not terraform_installed.stat.exists
+
+- name: Check if PATH contains {{ install_tools_dir }}\\Terraform
+  win_shell: |
+    $env:PATH -like "*{{ install_tools_dir }}\Terraform*"
+  register: path_check
+  changed_when: false
+
+- name: Add JAVA_HOME bin to PATH if missing
+  ansible.windows.win_path:
+    elements:
+      - '{{ install_tools_dir }}\Terraform\'
+  when: path_check.stdout.strip() == 'False'
+  changed_when: true
