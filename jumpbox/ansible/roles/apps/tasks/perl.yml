@@ -1,0 +1,5 @@
+---
+- name: Install Strawberry Perl
+  win_chocolatey:
+    name: strawberryperl
+    state: present

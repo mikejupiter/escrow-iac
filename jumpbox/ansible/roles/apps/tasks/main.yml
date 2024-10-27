@@ -33,4 +33,8 @@
 
 - name: Install muCommander
   import_tasks: mucommander.yml
-  tags: [ apps, mucommander ]  
+  tags: [ apps, mucommander ]
+
+- name: Install Perl
+  import_tasks: perl.yml
+  tags: [ apps, perl ]  
