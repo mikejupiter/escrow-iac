@@ -12,12 +12,13 @@ RUN apk --update add \
     unzip \
     npm \
     python3 \
-    py3-pip
+    py3-pip \
+    aws-cli
 
 RUN pip3 install ansible    
 
-RUN wget https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_linux_amd64.zip
-RUN unzip terraform_1.6.6_linux_amd64.zip && rm terraform_1.6.6_linux_amd64.zip
+RUN wget https://releases.hashicorp.com/terraform/1.10.5/terraform_1.10.5_linux_amd64.zip
+RUN unzip terraform_1.10.5_linux_amd64.zip && rm terraform_1.10.5_linux_amd64.zip
 RUN mv terraform /usr/bin/terraform
 #
 # Add kaniko to this image by re-using binaries and steps from official image
@@ -28,11 +29,6 @@ ENV PATH $PATH:/usr/local/bin:/kaniko
 ENV DOCKER_CONFIG /kaniko/.docker/
 ENV DOCKER_CREDENTIAL_GCR_CONFIG /kaniko/.config/gcloud/docker_credential_gcr_config.json
 
-# Install AWS CLI v2 (adjust version as needed)
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip && \
-    ./aws/install && \
-    rm -rf aws awscliv2.zip
 
 RUN chmod 777 /kaniko
 RUN echo "jenkins ALL=(ALL) NOPASSWD:SETENV: /kaniko/executor" >> /etc/sudoers
