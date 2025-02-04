@@ -10,6 +10,10 @@ variable "vpc_cidr" {
     description = "Internal IP range"
 }
 
+variable "ecs_dev_cidr" {
+    description = "ECS DEV IP range"
+}
+
 # variable "vpc_id" {}
 # variable "subnets" {
 #   type = list(string)

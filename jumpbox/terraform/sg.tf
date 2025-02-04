@@ -66,7 +66,7 @@ resource "aws_security_group" "pg_sg" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = [var.vpc_cidr]  
+    cidr_blocks = [var.vpc_cidr, var.ecs_dev_cidr]  
   }
 }
 
