@@ -3,7 +3,8 @@ FROM jenkins/inbound-agent:latest-alpine-jdk21
 
 USER root
 
-RUN apk --update add \
+RUN apk update && \
+    apk add --no-cache \
     bash \
     sudo \
     curl \
@@ -13,9 +14,11 @@ RUN apk --update add \
     npm \
     python3 \
     py3-pip \
-    aws-cli
+    aws-cli \
+    ansible && \
+  rm -rf /tmp/* && \
+  rm -rf /var/cache/apk/*
 
-RUN pip3 install ansible    
 
 RUN wget https://releases.hashicorp.com/terraform/1.10.5/terraform_1.10.5_linux_amd64.zip
 RUN unzip terraform_1.10.5_linux_amd64.zip && rm terraform_1.10.5_linux_amd64.zip
