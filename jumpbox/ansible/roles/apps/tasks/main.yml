@@ -1,4 +1,8 @@
 ---
+- name: Prepare env
+  import_tasks: prepare.yml
+  tags: [ apps, prepare ]
+
 - name: Install Chocolatey if not present
   import_tasks: choco.yml
   tags: [ apps, zip, notepad, git ]
