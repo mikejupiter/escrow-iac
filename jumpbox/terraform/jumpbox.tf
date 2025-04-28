@@ -13,13 +13,29 @@ data "aws_eip" "jumpbox_eip" {
   id = var.eip
 }
 
+data "aws_ami" "windows2022" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["Windows_Server-2022-English-Full-Base-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["801119661308"] # Official AWS Windows AMI owner ID
+}
+
 resource "aws_key_pair" "jumpbox_key" {
   key_name   = "jumpbox-key"
   public_key = file("../../secrets/jumpbox_id_rsa.pub")  
 }
 
 resource "aws_instance" "jumpbox" {
-  ami           = "ami-0f9c44e98edf38a2b"  # 64-bit (x86) Microsoft Windows 2022 Datacenter edition. [English]
+  ami           = data.aws_ami.windows2022.id  # 64-bit (x86) Microsoft Windows 2022 Datacenter edition. [English]
   instance_type = "t2.medium"
   availability_zone = var.availability_zone
   
