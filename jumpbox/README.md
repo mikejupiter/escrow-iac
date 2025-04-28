@@ -90,7 +90,11 @@ ansible_python_interpreter=/usr/bin/python3
 ## Running Ansible
 
 ```
-ansible-playbook -i env/dev/hosts playbook.yaml
+ansible-playbook -i env/dev/hosts -e "@./env/dev/dev.vars" playbook.yaml 
+
+# For some specific module
+ansible-playbook -i env/dev/hosts -e "@./env/dev/dev.vars" playbook.yaml -v --tags="perl"
+
 ```
 
 # Troubleshooting
