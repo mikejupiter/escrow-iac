@@ -42,8 +42,16 @@ You need to get the ARN for Elastic IP from the output of `eip` module and make 
 
 ## Running Terraform
 
+First off you need to init the Terraform:
+
 ```
-terraform apply -var-file="./env/dev.tfvars" -backend-config="key=jumpbox/terraform.tfstate" -backend-config="bucket=g2sentry-terraform-state-bucket"
+terraform init -backend-config="key=jumpbox/terraform.tfstate" -backend-config="bucket=g2sentry-terraform-state-bucket"
+```
+
+and now you can `apply`:
+
+```
+terraform apply -var-file="./env/dev.tfvars"
 ```
 
 ## Create config env files for Ansible

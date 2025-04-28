@@ -4,8 +4,8 @@ provider "aws" {
 
 terraform {
   backend "s3" { 
-    region         = var.aws_region  # AWS region
-    encrypt        = false         # Encrypt the state file in the S3 bucket
+    region         = "us-east-1"  # AWS region. We can't use here the region var. That is the region where S3 would be located
+    encrypt        = false        # Encrypt the state file in the S3 bucket
   }
 }
 
