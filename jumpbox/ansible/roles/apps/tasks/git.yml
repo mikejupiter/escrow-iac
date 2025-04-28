@@ -18,7 +18,7 @@
     
 - name: Download Git Duet
   win_get_url:
-    url: https://github.com/git-duet/git-duet/releases/download/0.10.0/windows_amd64.tar.gz
+    url: "https://github.com/git-duet/git-duet/releases/download/{{ git_duet_ver }}/windows_amd64.tar.gz"
     dest: C:\temp\windows_amd64.tar.gz
   when: not git_duet_installed.stat.exists
 

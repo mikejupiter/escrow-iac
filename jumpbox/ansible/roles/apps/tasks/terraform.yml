@@ -7,7 +7,7 @@
 
 - name: Download Terraform zip
   win_get_url:
-    url: "https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_windows_amd64.zip"
+    url: "https://releases.hashicorp.com/terraform/{{ terraform_ver }}/terraform_{{ terraform_ver }}_windows_amd64.zip"
     dest: "C:\\temp\\terraform.zip"
   when: not terraform_installed.stat.exists
   
