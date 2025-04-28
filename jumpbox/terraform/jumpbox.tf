@@ -2,6 +2,13 @@ provider "aws" {
   region = var.aws_region  # Replace with your desired AWS region
 }
 
+terraform {
+  backend "s3" { 
+    region         = var.aws_region  # AWS region
+    encrypt        = false         # Encrypt the state file in the S3 bucket
+  }
+}
+
 data "aws_eip" "jumpbox_eip" {
   id = var.eip
 }
