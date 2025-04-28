@@ -15,10 +15,19 @@ resource "aws_instance" "jumpbox" {
   ami           = "ami-0f9c44e98edf38a2b"  # 64-bit (x86) Microsoft Windows 2022 Datacenter edition. [English]
   instance_type = "t2.medium"
   availability_zone = var.availability_zone
+  
 
   key_name      = aws_key_pair.jumpbox_key.key_name  
 
+  
+  root_block_device {
+    volume_size = 50     # <-- This is what increases the C: drive to 50 GB
+    volume_type = "gp3"  
+    delete_on_termination = true
+  }
+
   tags = {
+    Purpose = "admin"
     Name = "Jumpbox"
   }
 
