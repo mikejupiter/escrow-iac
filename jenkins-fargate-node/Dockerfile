@@ -40,7 +40,7 @@ ENV DOCKER_CREDENTIAL_GCR_CONFIG /kaniko/.config/gcloud/docker_credential_gcr_co
 RUN chmod 777 /kaniko
 RUN echo "jenkins ALL=(ALL) NOPASSWD:SETENV: /kaniko/executor" >> /etc/sudoers
 
-RUN mkdir -p /workspace
+RUN mkdir -p /workspace && chown 777 /workspace
 
 USER jenkins
 
