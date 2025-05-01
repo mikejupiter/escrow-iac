@@ -1,4 +1,4 @@
-FROM gcr.io/kaniko-project/executor:debug AS kaniko
+FROM gcr.io/kaniko-project/executor:latest AS kaniko
 FROM jenkins/inbound-agent:latest-alpine-jdk21
 
 USER root
