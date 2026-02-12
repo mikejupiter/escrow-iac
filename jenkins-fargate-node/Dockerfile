@@ -21,6 +21,10 @@ RUN apk update && \
     ansible && \
     rm -rf /tmp/* /var/cache/apk/*
 
+# Ensure pip is up-to-date and install Ansible Windows dependencies
+RUN python3 -m pip install --upgrade pip setuptools wheel && \
+    python3 -m pip install --no-cache-dir pywinrm requests_ntlm
+
 # Install Terraform
 RUN wget https://releases.hashicorp.com/terraform/${TRRAFORM_VERSION}/terraform_${TRRAFORM_VERSION}_linux_amd64.zip && \
     unzip terraform_${TRRAFORM_VERSION}_linux_amd64.zip && \
