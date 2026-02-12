@@ -3,7 +3,7 @@ FROM jenkins/inbound-agent:latest-alpine-jdk21
 
 USER root
 
-ENV TRRAFORM_VERSION=1.11.4
+ENV TRRAFORM_VERSION=1.14.5
 
 # Install required tools
 RUN apk update && \
